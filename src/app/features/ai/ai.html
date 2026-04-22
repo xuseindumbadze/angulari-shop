@@ -1,0 +1,121 @@
+<div class="ai-wrapper">
+
+  <!-- FAB ღილაკი -->
+  <button class="ai-fab" (click)="toggle()" [class.open]="isOpen()" aria-label="AI კონსულტანტი">
+    @if (!isOpen()) {
+      <span class="fab-icon">🤖</span>
+      <span class="fab-label">AI დახმარება</span>
+    } @else {
+      <span class="fab-icon">✕</span>
+    }
+  </button>
+
+  <!-- ჩატის პანელი -->
+  @if (isOpen()) {
+    <div class="ai-panel">
+
+      <!-- Header -->
+      <div class="ai-header">
+        <div class="ai-header-info">
+          <div class="ai-avatar">🤖</div>
+          <div>
+            <div class="ai-name">TechBot</div>
+            <div class="ai-status">● ონლაინ</div>
+          </div>
+        </div>
+        <button class="ai-close" (click)="toggle()">✕</button>
+      </div>
+
+      <!-- შეტყობინებები -->
+      <div class="ai-messages" #messagesBox>
+        @for (msg of messages(); track $index) {
+          <div class="ai-msg-row" [class.user-row]="msg.role === 'user'">
+            @if (msg.role === 'assistant') {
+              <div class="ai-bubble-avatar">🤖</div>
+            }
+            <div class="ai-bubble" [class.user]="msg.role === 'user'" [class.bot]="msg.role === 'assistant'">
+              @if (msg.loading) {
+                <div class="ai-typing">
+                  <span></span><span></span><span></span>
+                </div>
+              } @else {
+                {{ msg.text }}
+              }
+            </div>
+          </div>
+
+          <!-- პროდუქტ ქარდები -->
+          @if (msg.products?.length) {
+            <div class="ai-products-grid">
+              @for (p of msg.products; track p._id) {
+                <div class="ai-product-card">
+                  <img [src]="p.thumbnail" [alt]="p.title" (click)="goToProduct(p._id)" />
+                  <div class="ai-product-info">
+                    <div class="ai-product-name" (click)="goToProduct(p._id)">{{ p.title }}</div>
+                    <div class="ai-product-meta">
+                      @if (p.price.discountPercentage > 0) {
+                        <span class="ai-old-price">{{ p.price.beforeDiscount }} {{ p.price.currency }}</span>
+                      }
+                      <span class="ai-price">{{ p.price.current }} {{ p.price.currency }}</span>
+                    </div>
+                    <div class="ai-stars">
+                      @for (star of getStars(p.rating); track $index) {
+                        <span [class.filled]="star">★</span>
+                      }
+                    </div>
+                    @if (p.stock <= 0) {
+                      <span class="ai-oos">არ არის მარაგში</span>
+                    }
+                    <div class="ai-card-actions">
+                      <button class="ai-cart-btn"
+                        [disabled]="p.stock <= 0 || addingToCart === p._id"
+                        [class.added]="addedToCart === p._id"
+                        (click)="addToCart(p._id)">
+                        @if (addingToCart === p._id) { ⏳ }
+                        @else if (addedToCart === p._id) { ✓ დაემატა }
+                        @else { 🛒 კალათა }
+                      </button>
+                      <button class="ai-compare-btn"
+                        [class.active]="compareService.has(p._id)"
+                        (click)="toggleCompare(p)">
+                        {{ compareService.has(p._id) ? '✓' : '⚖' }}
+                      </button>
+                      <button class="ai-detail-btn" (click)="goToProduct(p._id)">
+                        დეტალები →
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Quick suggestions -->
+      <div class="ai-suggestions">
+        <button (click)="input = 'საუკეთესო რეიტინგის ტელეფონი'; send()">⭐ TOP ტელეფონი</button>
+        <button (click)="input = 'მაჩვენე ფასდაკლებიანი პროდუქტები'; send()">🏷️ ფასდაკლება</button>
+        <button (click)="input = 'ყველაზე იაფი ლეპტოპი'; send()">💻 იაფი ლეპტოპი</button>
+        <button (click)="input = '3 წლიანი გარანტიით პროდუქტები'; send()">🛡️ გარანტია</button>
+      </div>
+
+      <!-- Input -->
+      <div class="ai-input-row">
+        <textarea
+          class="ai-input"
+          [(ngModel)]="input"
+          (keydown)="onKeydown($event)"
+          placeholder="დამისვი შეკითხვა..."
+          rows="1"
+          [disabled]="isLoading()">
+        </textarea>
+        <button class="ai-send-btn" (click)="send()" [disabled]="isLoading() || !input.trim()">
+          ➤
+        </button>
+      </div>
+
+    </div>
+  }
+
+</div>

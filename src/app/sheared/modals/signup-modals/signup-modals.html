@@ -1,0 +1,83 @@
+<div class="modal-overlay" (click)="onOverlayClick($event)">
+  <div class="modal">
+
+    <button class="modal-close" (click)="close.emit()" aria-label="Close">✕</button>
+
+    <h2 class="modal-title">Create Account</h2>
+
+    @if (errorMsg()) {
+    <div class="error-box">{{ errorMsg() }}</div>
+    }
+    @if (errorMsg()) {
+    <div class="error-box">{{ errorMsg() }}</div>
+    }
+
+    @if (successMsg()) {
+    <div class="success-box">✓ {{ successMsg() }}</div>
+    }
+
+    <div class="modal-body">
+
+      <div class="field">
+        <span class="field-icon">👤</span>
+        <input type="text" placeholder="First Name" [(ngModel)]="firstName" class="field-input"
+          aria-label="First Name" />
+      </div>
+
+      <div class="field">
+        <span class="field-icon">👤</span>
+        <input type="text" placeholder="Last Name" [(ngModel)]="lastName" class="field-input" aria-label="Last Name" />
+      </div>
+
+      <div class="field">
+        <span class="field-icon">✉</span>
+        <input type="email" placeholder="Email" [(ngModel)]="email" class="field-input" aria-label="Email" />
+      </div>
+
+      <div class="field">
+        <span class="field-icon">🔒</span>
+        <input type="password" placeholder="Password" [(ngModel)]="password" class="field-input"
+          aria-label="Password" />
+      </div>
+
+      <div class="field">
+        <span class="field-icon">📞</span>
+        <input type="tel" placeholder="Phone" [(ngModel)]="phone" class="field-input" aria-label="Phone" />
+      </div>
+
+      <div class="field">
+        <span class="field-icon">📮</span>
+        <input type="text" placeholder="ZIP Code" [(ngModel)]="zipcode" class="field-input" aria-label="ZIP Code" />
+      </div>
+
+      <div class="field full">
+        <span class="field-icon">📍</span>
+        <input type="text" placeholder="Address" [(ngModel)]="address" class="field-input" aria-label="Address" />
+      </div>
+
+      <div class="field">
+        <span class="field-icon">🎂</span>
+        <input type="number" placeholder="Age" [(ngModel)]="age" class="field-input" aria-label="Age" />
+      </div>
+
+      <div class="field select-field">
+        <span class="field-icon">⚧</span>
+        <select [(ngModel)]="gender" class="field-input" aria-label="Gender">
+          <option value="MALE">Male</option>
+          <option value="FEMALE">Female</option>
+        </select>
+      </div>
+
+    </div>
+
+    <button class="submit-btn" (click)="submit()" [disabled]="isLoading()">
+      {{ isLoading() ? 'Creating account...' : 'Register' }}
+    </button>
+
+    <p class="switch-text">
+      Already have an account?
+      <button class="switch-btn" (click)="switchToSignIn.emit()">Sign in</button>
+    </p>
+
+  </div>
+</div>

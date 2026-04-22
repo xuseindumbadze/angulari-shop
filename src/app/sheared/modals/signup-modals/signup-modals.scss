@@ -1,0 +1,140 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 48px 40px 36px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  &:hover { background: #333; }
+}
+
+.modal-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #1a1a1a;
+  text-align: center;
+}
+
+.error-box {
+  background: #fdecea;
+  color: #e53935;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.modal-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 0 14px;
+  transition: border-color 0.2s;
+
+  &:focus-within { border-color: #6c63ff; }
+  &.full { grid-column: 1 / -1; }
+}
+
+.field-icon { font-size: 15px; color: #999; }
+
+.field-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 13px 0;
+  font-size: 14px;
+  color: #1a1a1a;
+  background: transparent;
+  width: 100%;
+
+  &::placeholder { color: #bbb; }
+}
+
+select.field-input { cursor: pointer; }
+
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover:not(:disabled) { background: #333; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.switch-text {
+  font-size: 13px;
+  color: #777;
+  text-align: center;
+  margin: 16px 0 0;
+}
+
+.switch-btn {
+  background: none;
+  border: none;
+  color: #6c63ff;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 13px;
+  &:hover { text-decoration: underline; }
+}
+
+@media (max-width: 500px) {
+  .modal { padding: 40px 20px 28px; }
+  .modal-body { grid-template-columns: 1fr; }
+  .field.full { grid-column: 1; }
+}
+.success-box {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}

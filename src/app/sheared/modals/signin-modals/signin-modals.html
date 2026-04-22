@@ -1,0 +1,55 @@
+<div class="modal-overlay" (click)="onOverlayClick($event)">
+  <div class="modal">
+
+    <button class="modal-close" (click)="close.emit()" aria-label="Close">✕</button>
+
+    <div class="modal-body">
+      <div class="modal-left">
+        <h2 class="modal-title">Sign in</h2>
+
+        @if (errorMsg()) {
+          <div class="error-box">{{ errorMsg() }}</div>
+        }
+
+        <div class="field">
+          <span class="field-icon">✉</span>
+          <input
+            type="email"
+            placeholder="Email"
+            [(ngModel)]="email"
+            class="field-input"
+            aria-label="Email"
+          />
+        </div>
+
+        <div class="field">
+          <span class="field-icon">🔒</span>
+          <input
+            type="password"
+            placeholder="Password"
+            [(ngModel)]="password"
+            class="field-input"
+            aria-label="Password"
+          />
+        </div>
+
+        <button class="submit-btn" (click)="submit()" [disabled]="isLoading()">
+          {{ isLoading() ? 'Signing in...' : 'Sign in' }}
+        </button>
+
+        <p class="switch-text">
+          Don't have an account?
+          <button class="switch-btn" (click)="switchToSignUp.emit()">Sign up now</button>
+        </p>
+      </div>
+
+      <div class="modal-right">
+        <div class="brand">
+          <span class="brand-main">Tech</span><span class="brand-accent">Zone</span>
+          <p>Your trusted electronics store</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

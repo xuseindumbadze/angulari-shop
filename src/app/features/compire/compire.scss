@@ -1,0 +1,283 @@
+.compare-page {
+  max-width: 1300px;
+  margin: 50px auto 80px;
+  padding: 0 30px;
+
+  .compare-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #111;
+      margin: 0;
+    }
+
+    .compare-count {
+      font-size: 13px;
+      color: #888;
+      margin-left: 14px;
+    }
+
+    .clear-btn {
+      background: transparent;
+      border: 1.5px solid #d0d0d0;
+      border-radius: 8px;
+      padding: 9px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        border-color: #e53935;
+        color: #e53935;
+        background: #fff5f5;
+      }
+    }
+  }
+
+  .compare-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 100px 0;
+    text-align: center;
+
+    .empty-icon { font-size: 56px; }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #555;
+      margin: 0;
+    }
+
+    p { color: #999; font-size: 15px; margin: 0; }
+
+    .go-shop-btn {
+      margin-top: 8px;
+      background: #111;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: background 0.2s;
+
+      &:hover { background: #333; }
+    }
+  }
+
+  .compare-scroll {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #e8e8e8;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+    background: #fff;
+
+    .col-label { width: 180px; min-width: 150px; }
+    .col-product { min-width: 220px; }
+
+    thead th {
+      padding: 24px 20px;
+      vertical-align: top;
+      border-bottom: 2px solid #f0f0f0;
+      background: #fff;
+
+      &.col-label {
+        background: #fafafa;
+        border-right: 1px solid #f0f0f0;
+      }
+    }
+
+    .product-card-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+
+      .remove-btn {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 1.5px solid #ddd;
+        background: #fff;
+        cursor: pointer;
+        font-size: 13px;
+        color: #888;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          border-color: #e53935;
+          color: #e53935;
+          background: #fff5f5;
+        }
+      }
+
+      img {
+        width: 130px;
+        height: 100px;
+        object-fit: contain;
+        background: #f8f8f8;
+        border-radius: 8px;
+        padding: 8px;
+        cursor: pointer;
+        transition: opacity 0.2s;
+
+        &:hover { opacity: 0.75; }
+      }
+
+      .prod-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: #111;
+        text-align: center;
+        line-height: 1.4;
+        cursor: pointer;
+        &:hover { color: #555; }
+      }
+
+      .prod-price {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+
+        .old-price {
+          font-size: 12px;
+          color: #aaa;
+          text-decoration: line-through;
+        }
+
+        .current-price {
+          font-size: 18px;
+          font-weight: 700;
+          color: #111;
+        }
+      }
+
+      .add-to-cart-btn {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        background: #111;
+        color: white;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s;
+
+        &:hover:not(:disabled) { background: #444; }
+        &:disabled { background: #ccc; cursor: not-allowed; }
+        &.added { background: #2e7d32; }
+      }
+    }
+
+    .add-slot-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      border: 2px dashed #d0d0d0;
+      border-radius: 12px;
+      padding: 30px 20px;
+      text-decoration: none;
+      color: #aaa;
+      transition: all 0.2s;
+      min-width: 180px;
+
+      &:hover {
+        border-color: #111;
+        color: #111;
+        background: #f5f5f5;
+      }
+
+      .plus-icon { font-size: 28px; }
+
+      span:last-child {
+        font-size: 13px;
+        font-weight: 600;
+        text-align: center;
+        line-height: 1.4;
+      }
+    }
+
+    tbody tr {
+      transition: background 0.15s;
+      &:nth-child(even) { background: #fafafa; }
+      &:hover { background: #f5f5f5; }
+
+      td {
+        padding: 16px 20px;
+        font-size: 14px;
+        color: #333;
+        border-bottom: 1px solid #f0f0f0;
+        vertical-align: middle;
+
+        &.td-label {
+          font-weight: 600;
+          font-size: 13px;
+          color: #444;
+          background: #fafafa;
+          border-right: 1px solid #f0f0f0;
+          white-space: nowrap;
+        }
+
+        &.td-value { text-align: center; }
+        &.best-value { color: #2e7d32; font-weight: 700; }
+        &.empty-cell { color: #ddd; }
+        &.description-cell {
+          font-size: 12px;
+          color: #777;
+          text-align: left;
+        }
+      }
+    }
+
+    .star { color: #ddd; font-size: 16px; }
+    .star.filled { color: #f5a623; }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+
+      &.badge-in { background: #e8f5e9; color: #2e7d32; }
+      &.badge-out { background: #ffebee; color: #c62828; }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 16px;
+    margin: 30px auto 60px;
+
+    h1 { font-size: 24px !important; }
+    .col-label { min-width: 120px !important; width: 120px !important; }
+    .col-product { min-width: 170px !important; }
+  }
+}

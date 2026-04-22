@@ -1,0 +1,79 @@
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Services } from '../../../core/services/services';
+import { CartService } from '../../../core/services/cart';
+import { Product } from '../../../models/product.modals';
+import { catchError, of } from 'rxjs';
+import { CompareService } from '../../../core/services/compire';
+
+@Component({
+  selector: 'app-product-detail-page',
+  imports: [CommonModule],
+  templateUrl: './product-detail-page.html',
+  styleUrl: './product-detail-page.scss',
+})
+export class ProductDetailPage implements OnInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private svc = inject(Services);
+  private cartService = inject(CartService);
+
+  compareService = inject(CompareService);
+  product = signal<Product | null>(null);
+  hasError = signal(false);
+  selectedImage = signal<string>('');
+  addedToCart = signal(false);
+  cartLoading = signal(false);
+
+  ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.svc.productsAll().pipe(
+        catchError(() => {
+          this.hasError.set(true);
+          return of(null);
+        })
+      ).subscribe(res => {
+        if (res) {
+          const found = res.products.find(p => p._id === id);
+          if (found) {
+            this.product.set(found);
+            const allImages = [found.thumbnail, ...found.images];
+            this.selectedImage.set(found.thumbnail);
+            found.images = allImages;
+          } else {
+            this.hasError.set(true);
+          }
+        }
+      });
+    }
+  }
+
+  addToCart(productId: string) {
+    this.cartLoading.set(true);
+    this.cartService.addProduct(productId).pipe(
+      catchError(() => of(null))
+    ).subscribe(res => {
+      this.cartLoading.set(false);
+      if (res) {
+        this.addedToCart.set(true);
+        setTimeout(() => this.addedToCart.set(false), 2000);
+      }
+    });
+  }
+
+  getStars(rating: number): boolean[] {
+    return Array.from({ length: 5 }, (_, i) => i < Math.round(rating));
+  }
+
+  goBack() {
+    this.router.navigate(['/']);
+  }
+
+  toggleCompare(product: Product) {
+  this.compareService.has(product._id)
+    ? this.compareService.remove(product._id)
+    : this.compareService.add(product);
+}
+}

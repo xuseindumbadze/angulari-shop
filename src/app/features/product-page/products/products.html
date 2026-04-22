@@ -1,0 +1,149 @@
+<section class="products-section">
+  <div class="products-layout">
+    <aside class="sidebar">
+      <p class="browse-label">Browse by :</p>
+      <div class="accordion-item">
+        <button class="accordion-header" (click)="categoryOpen.set(!categoryOpen())">
+          <span>Category</span>
+          <span class="acc-icon">{{ categoryOpen() ? '−' : '+' }}</span>
+        </button>
+        @if (categoryOpen()) {
+        <div class="accordion-body">
+          @for (cat of categories(); track cat.id) {
+          <button class="filter-chip" [class.active]="selectedCategory() === cat.id" (click)="selectCategory(cat.id)">
+            <img [src]="cat.image" [alt]="cat.name" class="chip-icon" />
+            {{ cat.name }}
+          </button>
+          }
+        </div>
+        }
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header" (click)="brandOpen.set(!brandOpen())">
+          <span>Brand</span>
+          <span class="acc-icon">{{ brandOpen() ? '−' : '+' }}</span>
+        </button>
+        @if (brandOpen()) {
+        <div class="accordion-body">
+          @for (brand of brands(); track brand) {
+          <label class="radio-row" (click)="selectBrand(brand)">
+            <span class="radio-dot" [class.selected]="selectedBrand() === brand"></span>
+            {{ brand | titlecase }}
+          </label>
+          }
+        </div>
+        }
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header" (click)="ratingOpen.set(!ratingOpen())">
+          <span>Rating</span>
+          <span class="acc-icon">{{ ratingOpen() ? '−' : '+' }}</span>
+        </button>
+        @if (ratingOpen()) {
+        <div class="accordion-body">
+          @for (r of [5, 4, 3, 2, 1]; track r) {
+          <label class="radio-row" (click)="selectRating(r)">
+            <span class="radio-dot" [class.selected]="selectedRating() === r"></span>
+            @for (star of getStars(r); track $index) {
+            <span class="star" [class.filled]="star">★</span>
+            }
+            <span class="rating-label">{{ r === 5 ? 'Only' : 'And up' }}</span>
+          </label>
+          }
+        </div>
+        }
+      </div>
+      <div class="accordion-item">
+        <button class="accordion-header" (click)="priceOpen.set(!priceOpen())">
+          <span>Price</span>
+          <span class="acc-icon">{{ priceOpen() ? '−' : '+' }}</span>
+        </button>
+        @if (priceOpen()) {
+        <div class="accordion-body price-body">
+          <div class="price-inputs">
+            <div class="price-field">
+              <label for="minPrice">Min:</label>
+              <input id="minPrice" type="number" [(ngModel)]="tempPriceMin" min="0" max="8000"
+                placeholder="Minimum price" />
+            </div>
+            <div class="price-field">
+              <label for="maxPrice">Max:</label>
+              <input id="maxPrice" type="number" [(ngModel)]="tempPriceMax" min="0" max="8000"
+                placeholder="Maximum price" />
+            </div>
+          </div>
+          <button class="apply-btn" (click)="applyPrice()">Apply Filter</button>
+        </div>
+        }
+      </div>
+      <button class="get-all-btn" (click)="resetAll()">
+        GET ALL <span>↩</span>
+      </button>
+    </aside>
+
+    <div class="products-grid">
+      @if (!allProducts().length && !hasError()) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading products...</p>
+      </div>
+      }
+      @if (hasError()) {
+      <div class="error-state">⚠️ Failed to load products. Please try again.</div>
+      }
+      @if (allProducts().length && !products().length) {
+      <div class="no-results">No products match your filters.</div>
+      }
+      @for (product of products(); track product._id) {
+      <div class="product-card" [class.out-of-stock]="product.stock <= 0" [routerLink]="['/product', product._id]">
+        <div class="card-image-wrapper">
+          <img class="card-image" [src]="product.thumbnail" [attr.alt]="product.title" loading="lazy" width="300"
+            height="225" />
+          @if (product.price.discountPercentage > 0) {
+          <span class="discount-badge">-{{ product.price.discountPercentage }}%</span>
+          }
+          @if (product.stock <= 0) { <span class="oos-ribbon">Out of Stock</span>
+            }
+        </div>
+        <div class="card-body">
+          <span class="category-label">{{ product.category.name }}</span>
+          <h3 class="product-title">{{ product.title }}</h3>
+          <p class="product-brand">{{ product.brand | titlecase }}</p>
+          <div class="rating">
+            @for (star of getStars(product.rating); track $index) {
+            <span class="star" [class.filled]="star">★</span>
+            }
+            <span class="rating-value">{{ product.rating | number:'1.1-1' }}</span>
+          </div>
+          <div class="price-block">
+            @if (product.price.discountPercentage > 0) {
+            <span class="old-price">{{ product.price.beforeDiscount | number:'1.0-0' }} {{ product.price.currency
+              }}</span>
+            }
+            <span class="current-price">{{ product.price.current | number:'1.0-0' }} {{ product.price.currency }}</span>
+          </div>
+          <p class="warranty">🛡️ {{ product.warranty }} year warranty</p>
+          <button class="stock-btn" [class.in-stock]="product.stock > 0 && addedToCart() !== product._id"
+            [class.no-stock]="product.stock <= 0" [class.added]="addedToCart() === product._id"
+            [disabled]="product.stock <= 0 || addingToCart() === product._id" (click)="addToCart($event, product._id)">
+            @if (addingToCart() === product._id) {
+            Adding...
+            } @else if (addedToCart() === product._id) {
+            ✓ Added!
+            } @else if (product.stock > 0) {
+            Add to Cart
+            } @else {
+            Out of Stock
+            }
+          </button>
+
+          <button class="compare-btn" [class.active]="compareService.has(product._id)"
+            (click)="toggleCompare($event, product)">
+            {{ compareService.has(product._id) ? '✓ შედარებაში' : '⚖ შედარება' }}
+          </button>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</section>

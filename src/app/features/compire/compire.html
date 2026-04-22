@@ -1,0 +1,148 @@
+<div class="compare-page">
+
+  <div class="compare-title-row">
+    <div class="compare-title-left">
+      <h1>შედარება</h1>
+      <span class="compare-count">{{ products.length }} პროდუქტი</span>
+    </div>
+    @if (products.length) {
+      <button class="clear-btn" (click)="clear()">🗑 გასუფთავება</button>
+    }
+  </div>
+
+  @if (!products.length) {
+    <div class="compare-empty">
+      <span class="empty-icon">⚖️</span>
+      <h2>შედარების სია ცარიელია</h2>
+      <p>პროდუქტის გვერდიდან დააჭირე "შედარება" ღილაკს</p>
+      <a routerLink="/" class="go-shop-btn">მაღაზიაში გადასვლა</a>
+    </div>
+  } @else {
+    <div class="compare-scroll">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th class="col-label"></th>
+            @for (p of products; track p._id) {
+              <th class="col-product">
+                <div class="product-card-header">
+                  <button class="remove-btn" (click)="remove(p._id)">✕</button>
+                  <img [src]="p.thumbnail" [alt]="p.title" (click)="goToProduct(p._id)" />
+                  <div class="prod-name" (click)="goToProduct(p._id)">{{ p.title }}</div>
+                  <div class="prod-price">
+                    @if (p.price.discountPercentage > 0) {
+                      <span class="old-price">{{ p.price.beforeDiscount | number:'1.0-0' }} {{ p.price.currency }}</span>
+                    }
+                    <span class="current-price">{{ p.price.current | number:'1.0-0' }} {{ p.price.currency }}</span>
+                  </div>
+                  <button class="add-to-cart-btn"
+                    [disabled]="p.stock <= 0 || addingToCart === p._id"
+                    [class.added]="addedToCart === p._id"
+                    (click)="addToCart(p._id, p.stock)">
+                    @if (addingToCart === p._id) { დაემატება... }
+                    @else if (addedToCart === p._id) { ✓ დაემატა! }
+                    @else if (p.stock <= 0) { არ არის მარაგში }
+                    @else { კალათაში დამატება }
+                  </button>
+                </div>
+              </th>
+            }
+            @for (slot of emptySlots; track $index) {
+              <th class="col-product">
+                <a routerLink="/" class="add-slot-box">
+                  <span class="plus-icon">＋</span>
+                  <span>დაამატე პროდუქტი შესადარებლად</span>
+                </a>
+              </th>
+            }
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td class="td-label">ბრენდი</td>
+            @for (p of products; track p._id) {
+              <td class="td-value">{{ p.brand | titlecase }}</td>
+            }
+            @for (slot of emptySlots; track $index) {
+              <td class="td-value empty-cell">—</td>
+            }
+          </tr>
+
+          <tr>
+            <td class="td-label">კატეგორია</td>
+            @for (p of products; track p._id) {
+              <td class="td-value">{{ p.category.name }}</td>
+            }
+            @for (slot of emptySlots; track $index) {
+              <td class="td-value empty-cell">—</td>
+            }
+          </tr>
+
+          <tr>
+            <td class="td-label">ფასი</td>
+            @for (p of products; track p._id; let i = $index) {
+              <td class="td-value" [class.best-value]="getBestIndex('price','min') === i">
+                {{ p.price.current | number:'1.0-0' }} {{ p.price.currency }}
+              </td>
+            }
+            @for (slot of emptySlots; track $index) {
+              <td class="td-value empty-cell">—</td>
+            }
+          </tr>
+
+          <tr>
+            <td class="td-label">რეიტინგი</td>
+            @for (p of products; track p._id; let i = $index) {
+              <td class="td-value" [class.best-value]="getBestIndex('rating','max') === i">
+                @for (star of getStars(p.rating); track $index) {
+                  <span class="star" [class.filled]="star">★</span>
+                }
+                <small>({{ p.rating | number:'1.1-1' }})</small>
+              </td>
+            }
+            @for (slot of emptySlots; track $index) {
+              <td class="td-value empty-cell">—</td>
+            }
+          </tr>
+
+          <tr>
+            <td class="td-label">მარაგი</td>
+            @for (p of products; track p._id; let i = $index) {
+              <td class="td-value" [class.best-value]="getBestIndex('stock','max') === i">
+                @if (p.stock > 0) {
+                  <span class="badge badge-in">მარაგშია ({{ p.stock }})</span>
+                } @else {
+                  <span class="badge badge-out">არ არის</span>
+                }
+              </td>
+            }
+            @for (slot of emptySlots; track $index) {
+              <td class="td-value empty-cell">—</td>
+            }
+          </tr>
+
+          <tr>
+            <td class="td-label">გარანტია</td>
+            @for (p of products; track p._id) {
+              <td class="td-value">🛡️ {{ p.warranty }} წელი</td>
+            }
+            @for (slot of emptySlots; track $index) {
+              <td class="td-value empty-cell">—</td>
+            }
+          </tr>
+
+          <tr>
+            <td class="td-label">აღწერა</td>
+            @for (p of products; track p._id) {
+              <td class="td-value description-cell">{{ p.description | slice:0:80 }}…</td>
+            }
+            @for (slot of emptySlots; track $index) {
+              <td class="td-value empty-cell">—</td>
+            }
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

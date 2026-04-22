@@ -1,0 +1,102 @@
+<header class="header">
+  <div class="header-inner">
+    <a routerLink="/" class="logo" aria-label="Tech-Zone Home">
+      <span class="logo-main">Tech</span><span class="logo-accent">Zone</span>
+    </a>
+
+    <div class="search-wrapper">
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.35-4.35" />
+        </svg>
+        <input type="search" class="search-input" placeholder="Search products..." [value]="searchQuery"
+          (input)="onSearch($any($event.target).value)" aria-label="Search products" autocomplete="off" />
+        @if (searchQuery) {
+          <button class="clear-btn" (click)="clearSearch()" aria-label="Clear search">✕</button>
+        }
+      </div>
+
+      @if (showResults()) {
+        <div class="search-dropdown" role="listbox">
+          @for (product of searchResults(); track product._id) {
+            <div class="search-item" role="option" (click)="goToProduct(product._id)">
+              <img [src]="product.thumbnail" [attr.alt]="product.title" class="search-thumb" />
+              <div class="search-info">
+                <span class="search-title">{{ product.title }}</span>
+                <span class="search-price">{{ product.price.current }} {{ product.price.currency }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <nav class="nav-desktop" aria-label="Main navigation">
+      <a routerLink="/compare" class="btn-compare" aria-label="შედარება">
+        ⚖ შედარება
+        @if (compareService.list().length) {
+          <span class="compare-badge">{{ compareService.list().length }}</span>
+        }
+      </a>
+
+      @if (!auth.isLoggedIn) {
+        <button class="btn-signup" (click)="openSignUp()">Sign up</button>
+        <button class="btn-signin" (click)="openSignIn()">Log in</button>
+      } @else {
+        <button class="btn-cart" (click)="goToCart()" aria-label="Cart">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M16 10a4 4 0 01-8 0" />
+          </svg>
+        </button>
+        <div class="user-info" (click)="goToProfile()" style="cursor:pointer">
+          <img [src]="auth.currentUser()?.avatar || 'https://api.dicebear.com/7.x/pixel-art/svg?seed=default'"
+            [attr.alt]="auth.currentUser()?.firstName" class="user-avatar" />
+          <span class="user-name">{{ auth.currentUser()?.firstName }}</span>
+        </div>
+        <button class="btn-signout" (click)="signOut()">Sign out</button>
+      }
+
+      <button class="burger" (click)="toggleMenu()" aria-label="Toggle menu" [attr.aria-expanded]="menuOpen()">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+@if (menuOpen()) {
+  <div class="drawer-overlay" (click)="toggleMenu()"></div>
+  <nav class="drawer" aria-label="Mobile navigation">
+    <button class="drawer-close" (click)="toggleMenu()" aria-label="Close menu">✕</button>
+    <a routerLink="/" class="drawer-link" (click)="toggleMenu()">Home</a>
+    <a routerLink="/compare" class="drawer-link" (click)="toggleMenu()">
+      ⚖ შედარება
+      @if (compareService.list().length) {
+        <span class="compare-badge" style="background:#6c63ff; color:#fff; border-radius:50%; width:20px; height:20px; font-size:11px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; margin-left:6px;">
+          {{ compareService.list().length }}
+        </span>
+      }
+    </a>
+    @if (auth.isLoggedIn) {
+      <a routerLink="/cart" class="drawer-link" (click)="toggleMenu()">Cart</a>
+    }
+    <div class="drawer-divider"></div>
+    @if (!auth.isLoggedIn) {
+      <button class="drawer-btn signup" (click)="openSignUp()">Sign up</button>
+      <button class="drawer-btn signin" (click)="openSignIn()">Log in</button>
+    } @else {
+      <span class="drawer-user">{{ auth.currentUser()?.firstName }} {{ auth.currentUser()?.lastName }}</span>
+      <button class="drawer-btn signout" (click)="signOut()">Sign out</button>
+    }
+  </nav>
+}
+
+@if (showSignIn()) {
+  <app-signin-modals (close)="closeModals()" (switchToSignUp)="openSignUp()"></app-signin-modals>
+}
+
+@if (showSignUp()) {
+  <app-signup-modals (close)="closeModals()" (switchToSignIn)="openSignIn()"></app-signup-modals>
+}
