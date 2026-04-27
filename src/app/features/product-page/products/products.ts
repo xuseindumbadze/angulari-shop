@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CompareService } from '../../../core/services/compire';
+import { AuthService } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-products',
@@ -20,6 +21,7 @@ export class Products implements OnInit, OnDestroy {
   private destroyed$ = new Subject<void>();
 
   compareService = inject(CompareService);
+  auth = inject(AuthService);
   allProducts = signal<Product[]>([]);
   categories = signal<Category[]>([]);
   brands = signal<string[]>([]);
@@ -81,6 +83,7 @@ export class Products implements OnInit, OnDestroy {
 
   addToCart(event: Event, productId: string) {
     event.stopPropagation();
+    if (!this.auth.isLoggedIn) return;
     this.addingToCart.set(productId);
 
     const cart = this.cartService.cart();
@@ -130,10 +133,11 @@ export class Products implements OnInit, OnDestroy {
   getStars(rating: number): boolean[] {
     return Array.from({ length: 5 }, (_, i) => i < Math.round(rating));
   }
+
   toggleCompare(event: Event, product: Product) {
-  event.stopPropagation();
-  this.compareService.has(product._id)
-    ? this.compareService.remove(product._id)
-    : this.compareService.add(product);
-}
+    event.stopPropagation();
+    this.compareService.has(product._id)
+      ? this.compareService.remove(product._id)
+      : this.compareService.add(product);
+  }
 }

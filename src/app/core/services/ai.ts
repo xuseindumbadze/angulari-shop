@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { inject } from '@angular/core';
 
 export interface AIMessage {
   role: 'user' | 'assistant';
@@ -8,6 +10,7 @@ export interface AIMessage {
 
 @Injectable({ providedIn: 'root' })
 export class AiService {
+  private http = inject(HttpClient);
 
   chat(messages: AIMessage[], products: any[]): Observable<any> {
     const productList = products.map(p =>
@@ -34,25 +37,11 @@ export class AiService {
 **პროდუქტების სია:**
 ${productList}`;
 
-    return new Observable(observer => {
-      fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'anthropic-dangerous-direct-browser-access': 'true',
-          'x-api-key': '', // ← შენი key აქ
-          'anthropic-version': '2023-06-01',
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 1024,
-          system,
-          messages,
-        }),
-      })
-        .then(r => r.json())
-        .then(data => { observer.next(data); observer.complete(); })
-        .catch(err => observer.error(err));
+    return this.http.post('/api/ai', {
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1024,
+      system,
+      messages,
     });
   }
 }

@@ -1,14 +1,21 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Product } from '../../models/product.modals';
 
 @Injectable({ providedIn: 'root' })
 export class CompareService {
   private readonly KEY = 'compare';
   private readonly MAX = 4;
+  private platformId = inject(PLATFORM_ID);
+
+  private get isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId);
+  }
 
   list = signal<Product[]>(this.load());
 
   private load(): Product[] {
+    if (!this.isBrowser) return [];
     try {
       return JSON.parse(localStorage.getItem(this.KEY) || '[]');
     } catch {
@@ -17,6 +24,7 @@ export class CompareService {
   }
 
   private save() {
+    if (!this.isBrowser) return;
     localStorage.setItem(this.KEY, JSON.stringify(this.list()));
   }
 
@@ -38,6 +46,6 @@ export class CompareService {
 
   clear() {
     this.list.set([]);
-    localStorage.removeItem(this.KEY);
+    if (this.isBrowser) localStorage.removeItem(this.KEY);
   }
 }

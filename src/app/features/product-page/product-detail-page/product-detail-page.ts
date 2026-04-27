@@ -6,6 +6,7 @@ import { CartService } from '../../../core/services/cart';
 import { Product } from '../../../models/product.modals';
 import { catchError, of } from 'rxjs';
 import { CompareService } from '../../../core/services/compire';
+import { AuthService } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-product-detail-page',
@@ -20,6 +21,7 @@ export class ProductDetailPage implements OnInit {
   private cartService = inject(CartService);
 
   compareService = inject(CompareService);
+  auth = inject(AuthService);
   product = signal<Product | null>(null);
   hasError = signal(false);
   selectedImage = signal<string>('');
@@ -51,6 +53,7 @@ export class ProductDetailPage implements OnInit {
   }
 
   addToCart(productId: string) {
+    if (!this.auth.isLoggedIn) return;
     this.cartLoading.set(true);
     this.cartService.addProduct(productId).pipe(
       catchError(() => of(null))
@@ -72,8 +75,8 @@ export class ProductDetailPage implements OnInit {
   }
 
   toggleCompare(product: Product) {
-  this.compareService.has(product._id)
-    ? this.compareService.remove(product._id)
-    : this.compareService.add(product);
-}
+    this.compareService.has(product._id)
+      ? this.compareService.remove(product._id)
+      : this.compareService.add(product);
+  }
 }

@@ -6,6 +6,7 @@ import { AiService, AIMessage } from '../../../app/core/services/ai';
 import { Services } from '../../../app/core/services/services';
 import { CartService } from '../../../app/core/services/cart';
 import { CompareService } from '../../../app/core/services/compire';
+import { AuthService } from '../../../app/core/services/auth';
 import { Product } from '../../../app/models/product.modals';
 import { catchError, of } from 'rxjs';
 
@@ -27,6 +28,7 @@ export class AiChatComponent implements OnInit {
   private svc = inject(Services);
   private cartService = inject(CartService);
   compareService = inject(CompareService);
+  auth = inject(AuthService);
   private router = inject(Router);
 
   @ViewChild('messagesBox') messagesBox!: ElementRef;
@@ -76,8 +78,6 @@ export class AiChatComponent implements OnInit {
     ).subscribe(res => {
       this.isLoading.set(false);
 
-      console.log('AI response:', res);
-
       if (!res || !res.content || !res.content[0]) {
         this.replaceLoading('შეცდომა მოხდა. სცადეთ თავიდან. 😔', []);
         return;
@@ -94,7 +94,7 @@ export class AiChatComponent implements OnInit {
           if (parsed.ids?.length) {
             products = this.allProducts.filter(p => parsed.ids.includes(p._id));
 
-            if (parsed.action === 'cart') {
+            if (parsed.action === 'cart' && this.auth.isLoggedIn) {
               products.forEach(p => this.addToCart(p._id));
             } else if (parsed.action === 'compare') {
               products.forEach(p => this.compareService.add(p));
@@ -121,6 +121,7 @@ export class AiChatComponent implements OnInit {
   }
 
   addToCart(id: string) {
+    if (!this.auth.isLoggedIn) return;
     this.addingToCart = id;
     this.cartService.addProduct(id).pipe(
       catchError(() => of(null))

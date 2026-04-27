@@ -46,12 +46,15 @@
           <p class="stock-status" [class.in]="p.stock > 0" [class.out]="p.stock <= 0">
             {{ p.stock > 0 ? 'In Stock (' + p.stock + ' left)' : 'Out of Stock' }}
           </p>
-          <button class="add-btn" [class.in-stock]="p.stock > 0 && !addedToCart()" [class.no-stock]="p.stock <= 0"
-            [class.added]="addedToCart()" [disabled]="p.stock <= 0 || cartLoading()" (click)="addToCart(p._id)">
+          <button class="add-btn" [class.in-stock]="p.stock > 0 && !addedToCart() && auth.isLoggedIn"
+            [class.no-stock]="p.stock <= 0 || !auth.isLoggedIn" [class.added]="addedToCart()"
+            [disabled]="p.stock <= 0 || cartLoading() || !auth.isLoggedIn" (click)="addToCart(p._id)">
             @if (cartLoading()) {
             Adding...
             } @else if (addedToCart()) {
             ✓ Added to Cart!
+            } @else if (!auth.isLoggedIn) {
+            🔒 გაიარე რეგისტრაცია
             } @else if (p.stock > 0) {
             Add to Cart
             } @else {
