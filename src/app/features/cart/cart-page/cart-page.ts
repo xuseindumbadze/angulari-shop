@@ -84,11 +84,9 @@ export class CartPage implements OnInit {
 
     this.cartService.updateProduct(productId, quantity).pipe(
       catchError(() => of(null))
-    ).subscribe(cart => {
-      if (cart) {
-        this.buildCartItems(cart.products, this.allProducts());
-      }
-    });
+    ).subscribe(
+      
+    );
   }
 
   removeProduct(productId: string) {
