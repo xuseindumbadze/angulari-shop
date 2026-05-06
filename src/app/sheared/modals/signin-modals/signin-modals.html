@@ -3,7 +3,6 @@
 
     <button class="modal-close" (click)="close.emit()" aria-label="Close">✕</button>
 
-    <!-- Tab Toggle -->
     <div class="signin-tabs">
       <button [class.active]="activeMode() === 'credentials'" (click)="activeMode.set('credentials')">
         🔐 Email / Password
@@ -13,11 +12,10 @@
       </button>
     </div>
 
-    <!-- CREDENTIALS MODE -->
     @if (activeMode() === 'credentials') {
       <div class="modal-body">
         <div class="modal-left">
-          <h2 class="modal-title">Sign in</h2>
+          <h2 class="modal-title">{{ translation.t('Sign in') }}</h2>
 
           @if (errorMsg()) {
             <div class="error-box">{{ errorMsg() }}</div>
@@ -27,7 +25,7 @@
             <span class="field-icon">✉</span>
             <input
               type="email"
-              placeholder="Email"
+              [placeholder]="translation.t('Email')"
               [(ngModel)]="email"
               class="field-input"
               aria-label="Email"
@@ -38,7 +36,7 @@
             <span class="field-icon">🔒</span>
             <input
               type="password"
-              placeholder="Password"
+              [placeholder]="translation.t('Password')"
               [(ngModel)]="password"
               class="field-input"
               aria-label="Password"
@@ -46,28 +44,27 @@
           </div>
 
           <button class="submit-btn" (click)="submit()" [disabled]="isLoading()">
-            {{ isLoading() ? 'Signing in...' : 'Sign in' }}
+            {{ isLoading() ? translation.t('Signing in...') : translation.t('Sign in') }}
           </button>
 
           <p class="switch-text">
-            Don't have an account?
-            <button class="switch-btn" (click)="switchToSignUp.emit()">Sign up now</button>
+            {{ translation.t("Don't have an account?") }}
+            <button class="switch-btn" (click)="switchToSignUp.emit()">{{ translation.t('Sign up now') }}</button>
           </p>
         </div>
 
         <div class="modal-right">
           <div class="brand">
             <span class="brand-main">Tech</span><span class="brand-accent">Zone</span>
-            <p>Your trusted electronics store</p>
+            <p>{{ translation.t('Your trusted electronics store') }}</p>
           </div>
         </div>
       </div>
     }
 
-    <!-- TOKEN MODE -->
     @if (activeMode() === 'token') {
       <div class="token-mode">
-        <h2 class="modal-title">Token-ით შესვლა</h2>
+        <h2 class="modal-title">{{ translation.t('Sign in with Token') }}</h2>
 
         @if (errorMsg()) {
           <div class="error-box">{{ errorMsg() }}</div>
@@ -77,7 +74,7 @@
         }
 
         <p class="token-desc">
-          შეიყვანე შენი <strong>access_token</strong> პირდაპირ შესასვლელად.
+          {{ translation.t('Enter your') }} <strong>access_token</strong> {{ translation.t('to sign in directly.') }}
         </p>
 
         <div class="field token-field">
@@ -96,12 +93,12 @@
           (click)="loginWithToken()"
           [disabled]="isLoading() || !manualToken.trim()"
         >
-          {{ isLoading() ? 'მოწმდება...' : '✅ ტოკენით შესვლა' }}
+          {{ isLoading() ? translation.t('Checking...') : translation.t('Sign in with Token') }}
         </button>
 
         <p class="switch-text">
-          Don't have an account?
-          <button class="switch-btn" (click)="switchToSignUp.emit()">Sign up now</button>
+          {{ translation.t("Don't have an account?") }}
+          <button class="switch-btn" (click)="switchToSignUp.emit()">{{ translation.t('Sign up now') }}</button>
         </p>
       </div>
     }

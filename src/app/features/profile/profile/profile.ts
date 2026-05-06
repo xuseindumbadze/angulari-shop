@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth';
 import { UpdateUserRequest, ChangePasswordRequest } from '../../../models/auth.models';
+import { TranslationService } from '../../../core/services/translation.service';
 
 export type ProfileTab = 'info' | 'edit' | 'password' | 'token' | 'danger';
 
@@ -16,36 +17,23 @@ export type ProfileTab = 'info' | 'edit' | 'password' | 'token' | 'danger';
 export class Profile implements OnInit {
   auth = inject(AuthService);
   router = inject(Router);
+  translation = inject(TranslationService);
 
   activeTab = signal<ProfileTab>('info');
 
-  // ─── Edit Form ────────────────────────────────────────────────────────────
   editForm: UpdateUserRequest = {
-    firstName: '',
-    lastName: '',
-    age: 0,
-    address: '',
-    phone: '',
-    zipcode: '',
-    gender: 'MALE',
-    avatar: '',
+    firstName: '', lastName: '', age: 0,
+    address: '', phone: '', zipcode: '',
+    gender: 'MALE', avatar: '',
   };
 
-  // ─── Password Form ────────────────────────────────────────────────────────
   passwordForm: ChangePasswordRequest = {
-    oldPassword: '',
-    newPassword: '',
-    confirmPassword: '',
+    oldPassword: '', newPassword: '', confirmPassword: '',
   };
 
-  // ─── Token ────────────────────────────────────────────────────────────────
   manualToken = '';
   showToken = signal(false);
-
-  // ─── Danger ───────────────────────────────────────────────────────────────
   deleteConfirmText = '';
-
-  // ─── UI State ─────────────────────────────────────────────────────────────
   isUpdating = signal(false);
   isChangingPw = signal(false);
   isDeleting = signal(false);
@@ -60,30 +48,19 @@ export class Profile implements OnInit {
     }
   }
 
-  setTab(tab: ProfileTab) {
-    this.activeTab.set(tab);
-    this.clearMessages();
-  }
+  setTab(tab: ProfileTab) { this.activeTab.set(tab); this.clearMessages(); }
 
   private populateEditForm() {
     const u = this.auth.currentUser();
     if (!u) return;
     this.editForm = {
-      firstName: u.firstName,
-      lastName: u.lastName,
-      age: u.age,
-      address: u.address,
-      phone: u.phone,
-      zipcode: u.zipcode,
-      gender: u.gender,
-      avatar: u.avatar,
+      firstName: u.firstName, lastName: u.lastName, age: u.age,
+      address: u.address, phone: u.phone, zipcode: u.zipcode,
+      gender: u.gender, avatar: u.avatar,
     };
   }
 
-  private clearMessages() {
-    this.successMsg.set('');
-    this.errorMsg.set('');
-  }
+  private clearMessages() { this.successMsg.set(''); this.errorMsg.set(''); }
 
   private showSuccess(msg: string) {
     this.successMsg.set(msg);
@@ -91,12 +68,7 @@ export class Profile implements OnInit {
     setTimeout(() => this.successMsg.set(''), 4000);
   }
 
-  private showError(msg: string) {
-    this.errorMsg.set(msg);
-    this.successMsg.set('');
-  }
-
-  // ─── Update Profile ───────────────────────────────────────────────────────
+  private showError(msg: string) { this.errorMsg.set(msg); this.successMsg.set(''); }
 
   saveProfile() {
     this.isUpdating.set(true);
@@ -104,25 +76,23 @@ export class Profile implements OnInit {
     this.auth.updateProfile(this.editForm).subscribe({
       next: () => {
         this.isUpdating.set(false);
-        this.showSuccess('პროფილი წარმატებით განახლდა!');
+        this.showSuccess(this.translation.t('Profile updated successfully!'));
         this.setTab('info');
       },
       error: () => {
         this.isUpdating.set(false);
-        this.showError('განახლება ვერ მოხერხდა. სცადეთ თავიდან.');
+        this.showError(this.translation.t('Update failed. Please try again.'));
       },
     });
   }
 
-  // ─── Change Password ──────────────────────────────────────────────────────
-
   changePassword() {
     if (this.passwordForm.newPassword !== this.passwordForm.confirmPassword) {
-      this.showError('ახალი პაროლები არ ემთხვევა.');
+      this.showError(this.translation.t('Passwords do not match.'));
       return;
     }
     if (this.passwordForm.newPassword.length < 6) {
-      this.showError('პაროლი მინიმუმ 6 სიმბოლო უნდა იყოს.');
+      this.showError(this.translation.t('Password must be at least 6 characters.'));
       return;
     }
     this.isChangingPw.set(true);
@@ -131,41 +101,25 @@ export class Profile implements OnInit {
       next: () => {
         this.isChangingPw.set(false);
         this.passwordForm = { oldPassword: '', newPassword: '', confirmPassword: '' };
-        this.showSuccess('პაროლი წარმატებით შეიცვალა!');
+        this.showSuccess(this.translation.t('Password changed successfully!'));
       },
       error: () => {
         this.isChangingPw.set(false);
-        this.showError('პაროლის შეცვლა ვერ მოხერხდა. შეამოწმეთ ძველი პაროლი.');
+        this.showError(this.translation.t('Password change failed. Check your old password.'));
       },
     });
   }
 
-  // ─── Token ────────────────────────────────────────────────────────────────
-
-  
-
-  // ─── Delete ───────────────────────────────────────────────────────────────
-
-  get deleteReady(): boolean {
-    return this.deleteConfirmText === 'DELETE';
-  }
+  get deleteReady(): boolean { return this.deleteConfirmText === 'DELETE'; }
 
   deleteAccount() {
     if (!this.deleteReady) return;
     this.isDeleting.set(true);
     this.auth.deleteAccount().subscribe({
-      next: () => {
-        this.isDeleting.set(false);
-        this.router.navigate(['/']);
-      },
-      error: () => {
-        this.isDeleting.set(false);
-        this.showError('ანგარიშის წაშლა ვერ მოხერხდა.');
-      },
+      next: () => { this.isDeleting.set(false); this.router.navigate(['/']); },
+      error: () => { this.isDeleting.set(false); this.showError(this.translation.t('Account deletion failed.')); },
     });
   }
 
-  signOut() {
-    this.auth.signOut().subscribe();
-  }
+  signOut() { this.auth.signOut().subscribe(); }
 }

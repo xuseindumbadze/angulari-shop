@@ -2,21 +2,21 @@
   @if (isLoading()) {
     <div class="loading">
       <div class="spinner"></div>
-      <p>Loading cart...</p>
+      <p>{{ translation.t('Loading cart...') }}</p>
     </div>
   }
 
   @if (hasError()) {
-    <div class="error-state">⚠️ Failed to load cart.</div>
+    <div class="error-state">⚠️ {{ translation.t('Failed to load cart.') }}</div>
   }
 
   @if (checkoutSuccess()) {
     <div class="success-wrapper">
       <div class="success-card">
         <div class="success-icon">✓</div>
-        <h2>Order Placed!</h2>
-        <p>Your order has been successfully placed. Thank you for shopping with TechZone!</p>
-        <button class="go-shopping-btn" (click)="goShopping()">Continue Shopping</button>
+        <h2>{{ translation.t('Order Placed!') }}</h2>
+        <p>{{ translation.t('Your order has been successfully placed. Thank you for shopping with TechZone!') }}</p>
+        <button class="go-shopping-btn" (click)="goShopping()">{{ translation.t('Continue Shopping') }}</button>
       </div>
     </div>
   }
@@ -25,15 +25,15 @@
     @if (!cartItems().length) {
       <div class="empty-cart">
         <div class="empty-icon">🛒</div>
-        <h2>Your cart is empty</h2>
-        <p>Looks like you haven't added anything yet.</p>
-        <button class="go-shopping-btn" (click)="goShopping()">Start Shopping</button>
+        <h2>{{ translation.t('Your cart is empty') }}</h2>
+        <p>{{ translation.t("Looks like you haven't added anything yet.") }}</p>
+        <button class="go-shopping-btn" (click)="goShopping()">{{ translation.t('Start Shopping') }}</button>
       </div>
     } @else {
       <div class="cart-wrapper">
         <div class="cart-header">
-          <h1 class="cart-title">Your Cart</h1>
-          <button class="clear-btn" (click)="clearCart()">Clear All</button>
+          <h1 class="cart-title">{{ translation.t('Your Cart') }}</h1>
+          <button class="clear-btn" (click)="clearCart()">{{ translation.t('Clear All') }}</button>
         </div>
 
         <div class="cart-layout">
@@ -63,18 +63,18 @@
           </div>
 
           <div class="cart-summary">
-            <h2 class="summary-title">Order Summary</h2>
+            <h2 class="summary-title">{{ translation.t('Order Summary') }}</h2>
             <div class="summary-row">
-              <span>Items ({{ cart()?.total?.products || 0 }})</span>
+              <span>{{ translation.t('Items') }} ({{ cart()?.total?.products || 0 }})</span>
               <span>{{ cart()?.total?.price?.current | number:'1.0-0' }} USD</span>
             </div>
             <div class="summary-divider"></div>
             <div class="summary-total">
-              <span>Total</span>
+              <span>{{ translation.t('Total') }}</span>
               <span>{{ cart()?.total?.price?.current | number:'1.0-0' }} USD</span>
             </div>
             <button class="checkout-btn" (click)="checkout()" [disabled]="checkoutLoading()">
-              {{ checkoutLoading() ? 'Processing...' : 'Checkout' }}
+              {{ checkoutLoading() ? translation.t('Processing...') : translation.t('Checkout') }}
             </button>
           </div>
         </div>

@@ -1,16 +1,14 @@
 <section class="products-section">
   <div class="products-layout">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
-      <p class="browse-label">Browse by :</p>
+      <p class="browse-label">{{ translation.t('Browse by :') }}</p>
 
       <div class="accordion-item">
         <button class="accordion-header" (click)="categoryOpen.set(!categoryOpen())">
-          <span>Category</span>
+          <span>{{ translation.t('Category') }}</span>
           <span class="acc-icon">{{ categoryOpen() ? '−' : '+' }}</span>
         </button>
-
         @if (categoryOpen()) {
         <div class="accordion-body">
           @for (cat of categories(); track cat.id) {
@@ -25,10 +23,9 @@
 
       <div class="accordion-item">
         <button class="accordion-header" (click)="brandOpen.set(!brandOpen())">
-          <span>Brand</span>
+          <span>{{ translation.t('Brand') }}</span>
           <span class="acc-icon">{{ brandOpen() ? '−' : '+' }}</span>
         </button>
-
         @if (brandOpen()) {
         <div class="accordion-body">
           @for (brand of brands(); track brand) {
@@ -43,21 +40,18 @@
 
       <div class="accordion-item">
         <button class="accordion-header" (click)="ratingOpen.set(!ratingOpen())">
-          <span>Rating</span>
+          <span>{{ translation.t('Rating') }}</span>
           <span class="acc-icon">{{ ratingOpen() ? '−' : '+' }}</span>
         </button>
-
         @if (ratingOpen()) {
         <div class="accordion-body">
           @for (r of [5, 4, 3, 2, 1]; track r) {
           <label class="radio-row" (click)="selectRating(r)">
             <span class="radio-dot" [class.selected]="selectedRating() === r"></span>
-
             @for (star of getStars(r); track $index) {
             <span class="star" [class.filled]="star">★</span>
             }
-
-            <span class="rating-label">{{ r === 5 ? 'Only' : 'And up' }}</span>
+            <span class="rating-label">{{ r === 5 ? translation.t('Only') : translation.t('And up') }}</span>
           </label>
           }
         </div>
@@ -66,141 +60,125 @@
 
       <div class="accordion-item">
         <button class="accordion-header" (click)="priceOpen.set(!priceOpen())">
-          <span>Price</span>
+          <span>{{ translation.t('Price') }}</span>
           <span class="acc-icon">{{ priceOpen() ? '−' : '+' }}</span>
         </button>
-
         @if (priceOpen()) {
         <div class="accordion-body price-body">
           <div class="price-inputs">
             <div class="price-field">
-              <label for="minPrice">Min:</label>
-              <input id="minPrice" type="number" [(ngModel)]="tempPriceMin" title="Minimum price" placeholder="Min" />
+              <label for="minPrice">{{ translation.t('Min:') }}</label>
+              <input id="minPrice" type="number" [(ngModel)]="tempPriceMin" title="Minimum price"
+                [placeholder]="translation.t('Min')" />
             </div>
-
             <div class="price-field">
-              <label for="maxPrice">Max:</label>
-              <input id="maxPrice" type="number" [(ngModel)]="tempPriceMax" title="Maximum price" placeholder="Max" />
+              <label for="maxPrice">{{ translation.t('Max:') }}</label>
+              <input id="maxPrice" type="number" [(ngModel)]="tempPriceMax" title="Maximum price"
+                [placeholder]="translation.t('Max')" />
             </div>
           </div>
-
-          <button class="apply-btn" (click)="applyPrice()">Apply Filter</button>
+          <button class="apply-btn" (click)="applyPrice()">{{ translation.t('Apply Filter') }}</button>
         </div>
         }
       </div>
 
       <button class="get-all-btn" (click)="resetAll()">
-        GET ALL <span>↩</span>
+        {{ translation.t('GET ALL') }} <span>↩</span>
       </button>
     </aside>
 
-    <!-- CONTENT AREA -->
     <div class="products-content">
 
-      <!-- PRODUCTS GRID -->
+      @if (!allProducts().length && !hasError()) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>{{ translation.t('Loading products...') }}</p>
+      </div>
+      }
+
+      @if (hasError()) {
+      <div class="error-state">
+        ⚠️ {{ translation.t('Failed to load products. Please try again.') }}
+      </div>
+      }
+
+      @if (allProducts().length && !products().length) {
+      <div class="no-results">
+        {{ translation.t('No products match your filters.') }}
+      </div>
+      }
+
       <div class="products-grid">
-
-        @if (!allProducts().length && !hasError()) {
-        <div class="loading">
-          <div class="spinner"></div>
-          <p>Loading products...</p>
-        </div>
-        }
-
-        @if (hasError()) {
-        <div class="error-state">
-          ⚠️ Failed to load products. Please try again.
-        </div>
-        }
-
-        @if (allProducts().length && !products().length) {
-        <div class="no-results">
-          No products match your filters.
-        </div>
-        }
-
         @for (product of products(); track product._id) {
         <div class="product-card" [class.out-of-stock]="product.stock <= 0" [routerLink]="['/product', product._id]">
-
           <div class="card-image-wrapper">
             <img class="card-image" [src]="product.thumbnail" [attr.alt]="product.title" />
-
             @if (product.price.discountPercentage > 0) {
-            <span class="discount-badge">
-              -{{ product.price.discountPercentage }}%
-            </span>
+            <span class="discount-badge">-{{ product.price.discountPercentage }}%</span>
             }
-
-            @if (product.stock <= 0) { <span class="oos-ribbon">Out of Stock</span>
+            @if (product.stock <= 0) { <span class="oos-ribbon">{{ translation.t('Out of Stock') }}</span>
               }
           </div>
-
           <div class="card-body">
             <span class="category-label">{{ product.category.name }}</span>
             <h3 class="product-title">{{ product.title }}</h3>
             <p class="product-brand">{{ product.brand | titlecase }}</p>
-
             <div class="rating">
               @for (star of getStars(product.rating); track $index) {
               <span class="star" [class.filled]="star">★</span>
               }
-              <span class="rating-value">
-                {{ product.rating | number:'1.1-1' }}
-              </span>
+              <span class="rating-value">{{ product.rating | number:'1.1-1' }}</span>
             </div>
-
             <div class="price-block">
               @if (product.price.discountPercentage > 0) {
-              <span class="old-price">
-                {{ product.price.beforeDiscount | number:'1.0-0' }}
-                {{ product.price.currency }}
-              </span>
+              <span class="old-price">{{ product.price.beforeDiscount | number:'1.0-0' }} {{ product.price.currency
+                }}</span>
               }
-
-              <span class="current-price">
-                {{ product.price.current | number:'1.0-0' }}
-                {{ product.price.currency }}
-              </span>
+              <span class="current-price">{{ product.price.current | number:'1.0-0' }} {{ product.price.currency
+                }}</span>
             </div>
-
-            <p class="warranty">🛡️ {{ product.warranty }} year warranty</p>
-
-            <button class="stock-btn" (click)="addToCart($event, product._id)">
-              Add to Cart
-            </button>
-
-            <button class="compare-btn" (click)="toggleCompare($event, product)">
-              ⚖ შედარება
-            </button>
+            <p class="warranty">🛡️ {{ product.warranty }} {{ translation.t('year warranty') }}</p>
+            <button class="stock-btn" (click)="addToCart($event, product._id)">{{ translation.t('Add to Cart')
+              }}</button>
+            <button class="compare-btn" (click)="toggleCompare($event, product)">{{ translation.t('Compare') }}</button>
           </div>
-
         </div>
         }
-
       </div>
 
-      <!-- PAGINATION (NOW CORRECT) -->
       <div class="pagination">
+        <div class="pagination-info">
+          {{ translation.t('Showing') }}
+          <strong>{{ (pageIndex() - 1) * pageSize() + 1 }}–{{ pageIndex() * pageSize() > total() ? total() : pageIndex()
+            * pageSize() }}</strong>
+          {{ translation.t('of') }} <strong>{{ total() }}</strong> {{ translation.t('results') }}
+        </div>
 
-        <div class="pages">
-          @for (p of pages(); track p) {
-          <button class="page-btn" [class.active]="p === pageIndex()" (click)="changePage(p)">
-            {{ p }}
-          </button>
+        <div class="pagination-controls">
+          <button class="page-btn nav-btn" (click)="changePage(pageIndex() - 1)" [disabled]="pageIndex() === 1"
+            aria-label="Previous">◀</button>
+
+          @for (p of visiblePages(); track $index) {
+          @if (p === 'gap') {
+          <span class="page-ellipsis">•••</span>
+          } @else {
+          <button class="page-btn" [class.active]="p === pageIndex()" (click)="changePage(+p)">{{ p }}</button>
           }
+          }
+
+          <button class="page-btn nav-btn" (click)="changePage(pageIndex() + 1)"
+            [disabled]="pageIndex() === totalPages()" aria-label="Next">▶</button>
         </div>
 
         <div class="page-size">
-          <span>Items per Page:</span>
-
-          <select title="Items per Page" (change)="changePageSize($any($event.target).value)">
-            <option [selected]="pageSize() === 6">6</option>
-            <option [selected]="pageSize() === 9">9</option>
-            <option [selected]="pageSize() === 18">18</option>
-            <option [selected]="pageSize() === 36">36</option>
-          </select>
+          <span>{{ translation.t('Items per Page:') }}</span>
+          <div class="page-size-options">
+            @for (opt of pageSizeOptions; track opt) {
+            <button class="size-btn" [class.active]="pageSize() === opt" (click)="changePageSize(opt)">{{ opt
+              }}</button>
+            }
+          </div>
         </div>
-
       </div>
 
     </div>

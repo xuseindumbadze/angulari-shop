@@ -3,32 +3,27 @@
   @if (!auth.currentUser()) {
     <div class="loading">
       <div class="spinner"></div>
-      <p>Loading profile...</p>
+      <p>{{ translation.t('Loading profile...') }}</p>
     </div>
   }
 
   @if (auth.currentUser(); as user) {
     <div class="profile-card">
 
-      <!-- Header -->
       <div class="profile-header">
-        <img
-          [src]="user.avatar || 'https://api.dicebear.com/7.x/pixel-art/svg?seed=default'"
-          [attr.alt]="user.firstName"
-          class="profile-avatar"
-        />
+        <img [src]="user.avatar || 'https://api.dicebear.com/7.x/pixel-art/svg?seed=default'"
+          [attr.alt]="user.firstName" class="profile-avatar" />
         <div class="profile-name">
           <h1>{{ user.firstName }} {{ user.lastName }}</h1>
           <span class="profile-role">{{ user.role }}</span>
           @if (user.verified) {
-            <span class="verified-badge">✓ Verified</span>
+            <span class="verified-badge">✓ {{ translation.t('Verified') }}</span>
           } @else {
-            <span class="unverified-badge">✗ Unverified</span>
+            <span class="unverified-badge">✗ {{ translation.t('Unverified') }}</span>
           }
         </div>
       </div>
 
-      <!-- Messages -->
       @if (successMsg()) {
         <div class="msg-box success">✓ {{ successMsg() }}</div>
       }
@@ -36,15 +31,13 @@
         <div class="msg-box error">⚠ {{ errorMsg() }}</div>
       }
 
-      <!-- Tabs -->
       <nav class="tab-nav">
-        <button [class.active]="activeTab() === 'info'"     (click)="setTab('info')">👤 ინფო</button>
-        <button [class.active]="activeTab() === 'edit'"     (click)="setTab('edit')">✏️ რედაქტირება</button>
-        <button [class.active]="activeTab() === 'password'" (click)="setTab('password')">🔒 პაროლი</button>
-        <button [class.active]="activeTab() === 'danger'"   (click)="setTab('danger')" class="danger-tab">⚠️ წაშლა</button>
+        <button [class.active]="activeTab() === 'info'"     (click)="setTab('info')">👤 {{ translation.t('Info') }}</button>
+        <button [class.active]="activeTab() === 'edit'"     (click)="setTab('edit')">✏️ {{ translation.t('Edit') }}</button>
+        <button [class.active]="activeTab() === 'password'" (click)="setTab('password')">🔒 {{ translation.t('Password') }}</button>
+        <button [class.active]="activeTab() === 'danger'"   (click)="setTab('danger')" class="danger-tab">⚠️ {{ translation.t('Delete') }}</button>
       </nav>
 
-      <!-- TAB: INFO -->
       @if (activeTab() === 'info') {
         <div class="profile-info">
           <div class="info-item">
@@ -52,76 +45,75 @@
             <span class="info-value">{{ user.email }}</span>
           </div>
           <div class="info-item">
-            <span class="info-label">სახელი</span>
+            <span class="info-label">{{ translation.t('First Name') }}</span>
             <span class="info-value">{{ user.firstName }} {{ user.lastName }}</span>
           </div>
           <div class="info-item">
-            <span class="info-label">ტელეფონი</span>
+            <span class="info-label">{{ translation.t('Phone') }}</span>
             <span class="info-value">{{ user.phone }}</span>
           </div>
           <div class="info-item">
-            <span class="info-label">ასაკი</span>
+            <span class="info-label">{{ translation.t('Age') }}</span>
             <span class="info-value">{{ user.age }}</span>
           </div>
           <div class="info-item">
-            <span class="info-label">სქესი</span>
-            <span class="info-value">{{ user.gender === 'MALE' ? 'Male' : 'Female' }}</span>
+            <span class="info-label">{{ translation.t('Gender') }}</span>
+            <span class="info-value">{{ user.gender === 'MALE' ? translation.t('Male') : translation.t('Female') }}</span>
           </div>
           <div class="info-item">
-            <span class="info-label">მისამართი</span>
+            <span class="info-label">{{ translation.t('Address') }}</span>
             <span class="info-value">{{ user.address }}</span>
           </div>
           <div class="info-item">
-            <span class="info-label">ZIP</span>
+            <span class="info-label">{{ translation.t('ZIP Code') }}</span>
             <span class="info-value">{{ user.zipcode }}</span>
           </div>
         </div>
-        <button class="signout-btn" (click)="signOut()">Sign out</button>
+        <button class="signout-btn" (click)="signOut()">{{ translation.t('Sign out') }}</button>
       }
 
-      <!-- TAB: EDIT -->
       @if (activeTab() === 'edit') {
         <form class="edit-form" (ngSubmit)="saveProfile()">
           <div class="form-row">
             <div class="field">
-              <label>სახელი</label>
-              <input type="text" [(ngModel)]="editForm.firstName" name="firstName" placeholder="სახელი" />
+              <label for="first-name">{{ translation.t('First Name') }}</label>
+              <input id="first-name" title="{{ translation.t('First Name') }}" type="text" [(ngModel)]="editForm.firstName" name="firstName" [placeholder]="translation.t('First Name')" />
             </div>
             <div class="field">
-              <label>გვარი</label>
-              <input type="text" [(ngModel)]="editForm.lastName" name="lastName" placeholder="გვარი" />
+              <label for="last-name">{{ translation.t('Last Name') }}</label>
+              <input id="last-name" title="{{ translation.t('Last Name') }}" type="text" [(ngModel)]="editForm.lastName" name="lastName" [placeholder]="translation.t('Last Name')" />
             </div>
           </div>
           <div class="form-row">
             <div class="field">
-              <label>ასაკი</label>
-              <input type="number" [(ngModel)]="editForm.age" name="age" placeholder="ასაკი" min="1" max="120" />
+              <label for="age">{{ translation.t('Age') }}</label>
+              <input id="age" title="{{ translation.t('Age') }}" type="number" [(ngModel)]="editForm.age" name="age" [placeholder]="translation.t('Age')" min="1" max="120" />
             </div>
             <div class="field">
-              <label for="gender">სქესი</label>
-              <select id="gender" [(ngModel)]="editForm.gender" name="gender" title="სქესის არჩევა">
-                <option value="MALE">Male</option>
-                <option value="FEMALE">Female</option>
+              <label for="gender">{{ translation.t('Gender') }}</label>
+              <select id="gender" [(ngModel)]="editForm.gender" name="gender" [title]="translation.t('Gender')">
+                 <option value="MALE">{{ translation.t('Male') }}</option>
+                <option value="FEMALE">{{ translation.t('Female') }}</option>
               </select>
             </div>
           </div>
           <div class="field full">
-            <label>მისამართი</label>
-            <input type="text" [(ngModel)]="editForm.address" name="address" placeholder="მისამართი" />
+            <label for="edit-address">{{ translation.t('Address') }}</label>
+            <input id="edit-address" title="{{ translation.t('Address') }}" type="text" [(ngModel)]="editForm.address" name="address" [placeholder]="translation.t('Address')" />
           </div>
           <div class="form-row">
             <div class="field">
-              <label>ტელეფონი</label>
-              <input type="tel" [(ngModel)]="editForm.phone" name="phone" placeholder="+995..." />
+              <label for="phone">{{ translation.t('Phone') }}</label>
+              <input id="phone" title="{{ translation.t('Phone') }}" type="tel" [(ngModel)]="editForm.phone" name="phone" placeholder="+995..." />
             </div>
             <div class="field">
-              <label>ZIP კოდი</label>
-              <input type="text" [(ngModel)]="editForm.zipcode" name="zipcode" placeholder="0179" />
+              <label for="zipcode">{{ translation.t('ZIP Code') }}</label>
+              <input id="zipcode" title="{{ translation.t('ZIP Code') }}" type="text" [(ngModel)]="editForm.zipcode" name="zipcode" placeholder="0179" />
             </div>
           </div>
           <div class="field full">
-            <label>Avatar URL</label>
-            <input type="url" [(ngModel)]="editForm.avatar" name="avatar" placeholder="https://..." />
+            <label for="avatar">{{ translation.t('Avatar URL') }}</label>
+            <input id="avatar" title="{{ translation.t('Avatar URL') }}" type="url" [(ngModel)]="editForm.avatar" name="avatar" placeholder="https://..." />
           </div>
           @if (editForm.avatar) {
             <div class="avatar-preview">
@@ -130,55 +122,47 @@
             </div>
           }
           <button type="submit" class="save-btn" [disabled]="isUpdating()">
-            {{ isUpdating() ? 'ინახება...' : '💾 ცვლილებების შენახვა' }}
+            {{ isUpdating() ? translation.t('Saving...') : '💾 ' + translation.t('Save Changes') }}
           </button>
         </form>
       }
 
-      <!-- TAB: PASSWORD -->
       @if (activeTab() === 'password') {
         <div class="password-section">
-          <p class="section-desc">შეიყვანე ძველი პაროლი და ახალი პაროლი მის შესაცვლელად.</p>
+          <p class="section-desc">{{ translation.t('Enter old password and new password to change it.') }}</p>
           <div class="field full">
-            <label>ძველი პაროლი</label>
-            <input type="password" [(ngModel)]="passwordForm.oldPassword" name="oldPassword" placeholder="••••••••" />
+            <label for="old-password">{{ translation.t('Old Password') }}</label>
+            <input id="old-password" title="{{ translation.t('Old Password') }}" type="password" [(ngModel)]="passwordForm.oldPassword" name="oldPassword" placeholder="••••••••" />
           </div>
           <div class="field full">
-            <label>ახალი პაროლი</label>
-            <input type="password" [(ngModel)]="passwordForm.newPassword" name="newPassword" placeholder="••••••••" />
+            <label for="new-password">{{ translation.t('New Password') }}</label>
+            <input id="new-password" title="{{ translation.t('New Password') }}" type="password" [(ngModel)]="passwordForm.newPassword" name="newPassword" placeholder="••••••••" />
           </div>
           <div class="field full">
-            <label>გაიმეორე ახალი პაროლი</label>
-            <input type="password" [(ngModel)]="passwordForm.confirmPassword" name="confirmPassword" placeholder="••••••••" />
+            <label for="confirm-password">{{ translation.t('Confirm New Password') }}</label>
+            <input id="confirm-password" title="{{ translation.t('Confirm New Password') }}" type="password" [(ngModel)]="passwordForm.confirmPassword" name="confirmPassword" placeholder="••••••••" />
           </div>
           @if (passwordForm.newPassword && passwordForm.confirmPassword) {
             <div class="pw-match" [class.match]="passwordForm.newPassword === passwordForm.confirmPassword">
-              {{ passwordForm.newPassword === passwordForm.confirmPassword ? '✓ პაროლები ემთხვევა' : '✗ პაროლები არ ემთხვევა' }}
+              {{ passwordForm.newPassword === passwordForm.confirmPassword ? '✓ ' + translation.t('Passwords match') : '✗ ' + translation.t('Passwords do not match.') }}
             </div>
           }
           <button class="save-btn" (click)="changePassword()" [disabled]="isChangingPw()">
-            {{ isChangingPw() ? 'იცვლება...' : '🔒 პაროლის შეცვლა' }}
+            {{ isChangingPw() ? translation.t('Changing...') : '🔒 ' + translation.t('Change Password') }}
           </button>
         </div>
       }
 
-
-      <!-- TAB: DANGER -->
       @if (activeTab() === 'danger') {
         <div class="danger-section">
           <div class="danger-card">
-            <h3>🗑 ანგარიშის წაშლა</h3>
-            <p>ეს მოქმედება <strong>შეუქცევადია</strong>. შენი ყველა მონაცემი სამუდამოდ წაიშლება.</p>
-            <p class="delete-hint">გასაგრძელებლად ჩაწერე: <strong>DELETE</strong></p>
-            <input
-              type="text"
-              class="delete-confirm-input"
-              [(ngModel)]="deleteConfirmText"
-              name="deleteConfirm"
-              placeholder="DELETE"
-            />
+            <h3>🗑 {{ translation.t('Delete Account') }}</h3>
+            <p>{{ translation.t('This action is') }} <strong>{{ translation.t('irreversible') }}</strong>. {{ translation.t('All your data will be permanently deleted.') }}</p>
+            <p class="delete-hint">{{ translation.t('Type to continue:') }} <strong>DELETE</strong></p>
+            <input id="delete-confirm" title="{{ translation.t('Type DELETE to confirm account deletion') }}" type="text" class="delete-confirm-input" [(ngModel)]="deleteConfirmText"
+              name="deleteConfirm" placeholder="DELETE" />
             <button class="delete-btn" [disabled]="!deleteReady || isDeleting()" (click)="deleteAccount()">
-              {{ isDeleting() ? 'იშლება...' : '🗑 ანგარიშის სამუდამოდ წაშლა' }}
+              {{ isDeleting() ? translation.t('Deleting...') : '🗑 ' + translation.t('Permanently Delete Account') }}
             </button>
           </div>
         </div>
@@ -188,4 +172,3 @@
   }
 
 </div>
- 

@@ -5,6 +5,7 @@ import { CartService } from '../../../core/services/cart';
 import { Services } from '../../../core/services/services';
 import { CartProduct } from '../../../models/cart-modals';
 import { Product } from '../../../models/product.modals';
+import { TranslationService } from '../../../core/services/translation.service';
 import { catchError, of, switchMap } from 'rxjs';
 
 export interface CartItemView {
@@ -27,6 +28,7 @@ export class CartPage implements OnInit {
   private cartService = inject(CartService);
   private svc = inject(Services);
   private router = inject(Router);
+  translation = inject(TranslationService);
 
   cart = this.cartService.cart;
   cartItems = signal<CartItemView[]>([]);
@@ -78,24 +80,18 @@ export class CartPage implements OnInit {
 
   updateQuantity(productId: string, quantity: number) {
     if (quantity < 1) return;
-
     const item = this.cartItems().find(i => i.productId === productId);
     if (item && quantity > item.stock) return;
-
     this.cartService.updateProduct(productId, quantity).pipe(
       catchError(() => of(null))
-    ).subscribe(
-      
-    );
+    ).subscribe();
   }
 
   removeProduct(productId: string) {
     this.cartService.removeProduct(productId).pipe(
       catchError(() => of(null))
     ).subscribe(cart => {
-      if (cart) {
-        this.buildCartItems(cart.products, this.allProducts());
-      }
+      if (cart) this.buildCartItems(cart.products, this.allProducts());
     });
   }
 

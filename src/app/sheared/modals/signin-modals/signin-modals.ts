@@ -2,6 +2,7 @@ import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth';
+import { TranslationService } from '../../../core/services/translation.service';
 
 export type SignInMode = 'credentials' | 'token';
 
@@ -16,6 +17,7 @@ export class SigninModalsComponent {
   @Output() switchToSignUp = new EventEmitter<void>();
 
   auth = inject(AuthService);
+  translation = inject(TranslationService);
 
   activeMode = signal<SignInMode>('credentials');
 
@@ -29,7 +31,7 @@ export class SigninModalsComponent {
 
   submit() {
     if (!this.email || !this.password) {
-      this.errorMsg.set('Please fill in all fields.');
+      this.errorMsg.set(this.translation.t('Please fill in all fields.'));
       return;
     }
     this.isLoading.set(true);
@@ -42,7 +44,7 @@ export class SigninModalsComponent {
       },
       error: () => {
         this.isLoading.set(false);
-        this.errorMsg.set('Invalid email or password.');
+        this.errorMsg.set(this.translation.t('Invalid email or password.'));
       },
     });
   }
@@ -50,7 +52,7 @@ export class SigninModalsComponent {
   loginWithToken() {
     const token = this.manualToken.trim();
     if (!token) {
-      this.errorMsg.set('ტოკენი ცარიელია.');
+      this.errorMsg.set(this.translation.t('Token is empty.'));
       return;
     }
     this.isLoading.set(true);
@@ -62,17 +64,17 @@ export class SigninModalsComponent {
       next: (user) => {
         this.isLoading.set(false);
         if (user) {
-          this.successMsg.set(`მოგესალმებით, ${user.firstName}!`);
+          this.successMsg.set(`${this.translation.t('Welcome')}, ${user.firstName}!`);
           setTimeout(() => this.close.emit(), 1200);
         } else {
           this.auth.setTokenManually('');
-          this.errorMsg.set('ტოკენი არასწორია ან ვადაგასულია.');
+          this.errorMsg.set(this.translation.t('Token is invalid or expired.'));
         }
       },
       error: () => {
         this.isLoading.set(false);
         this.auth.setTokenManually('');
-        this.errorMsg.set('ტოკენი არასწორია ან ვადაგასულია.');
+        this.errorMsg.set(this.translation.t('Token is invalid or expired.'));
       },
     });
   }

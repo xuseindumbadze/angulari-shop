@@ -7,6 +7,7 @@ import { Product } from '../../../models/product.modals';
 import { catchError, of } from 'rxjs';
 import { CompareService } from '../../../core/services/compire';
 import { AuthService } from '../../../core/services/auth';
+import { TranslationService } from '../../../core/services/translation.service';
 
 @Component({
   selector: 'app-product-detail-page',
@@ -22,6 +23,8 @@ export class ProductDetailPage implements OnInit {
 
   compareService = inject(CompareService);
   auth = inject(AuthService);
+  translation = inject(TranslationService);
+
   product = signal<Product | null>(null);
   hasError = signal(false);
   selectedImage = signal<string>('');
@@ -32,10 +35,7 @@ export class ProductDetailPage implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.svc.productsAll().pipe(
-        catchError(() => {
-          this.hasError.set(true);
-          return of(null);
-        })
+        catchError(() => { this.hasError.set(true); return of(null); })
       ).subscribe(res => {
         if (res) {
           const found = res.products.find(p => p._id === id);
@@ -70,9 +70,7 @@ export class ProductDetailPage implements OnInit {
     return Array.from({ length: 5 }, (_, i) => i < Math.round(rating));
   }
 
-  goBack() {
-    this.router.navigate(['/']);
-  }
+  goBack() { this.router.navigate(['/']); }
 
   toggleCompare(product: Product) {
     this.compareService.has(product._id)

@@ -1,72 +1,75 @@
 <div class="detail-page">
   @if (!product() && !hasError()) {
-  <div class="loading">
-    <div class="spinner"></div>
-    <p>Loading product...</p>
-  </div>
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>{{ translation.t('Loading product...') }}</p>
+    </div>
   }
 
   @if (hasError()) {
-  <div class="error-state">⚠️ Failed to load product.</div>
+    <div class="error-state">⚠️ {{ translation.t('Failed to load product.') }}</div>
   }
 
   @if (product(); as p) {
-  <div class="detail-wrapper">
-    <div class="detail-card">
-      <button class="back-btn" (click)="goBack()">← Back</button>
-      <div class="card-content">
-        <div class="detail-images">
-          <img class="main-image" [src]="selectedImage()" [attr.alt]="p.title" />
-          <div class="thumbnails">
-            @for (img of p.images; track $index) {
-            <img class="thumb" [src]="img" [attr.alt]="p.title" [class.active]="selectedImage() === img"
-              (click)="selectedImage.set(img)" />
-            }
+    <div class="detail-wrapper">
+      <div class="detail-card">
+        <button class="back-btn" (click)="goBack()">← {{ translation.t('Back') }}</button>
+        <div class="card-content">
+          <div class="detail-images">
+            <img class="main-image" [src]="selectedImage()" [attr.alt]="p.title" />
+            <div class="thumbnails">
+              @for (img of p.images; track $index) {
+                <img class="thumb" [src]="img" [attr.alt]="p.title"
+                  [class.active]="selectedImage() === img" (click)="selectedImage.set(img)" />
+              }
+            </div>
           </div>
-        </div>
-        <div class="detail-info">
-          <span class="category-label">{{ p.category.name }}</span>
-          <h1 class="detail-title">{{ p.title }}</h1>
-          <p class="detail-brand">{{ p.brand | titlecase }}</p>
-          <div class="rating">
-            @for (star of getStars(p.rating); track $index) {
-            <span class="star" [class.filled]="star">★</span>
-            }
-            <span class="rating-value">{{ p.rating | number:'1.1-1' }}</span>
+          <div class="detail-info">
+            <span class="category-label">{{ p.category.name }}</span>
+            <h1 class="detail-title">{{ p.title }}</h1>
+            <p class="detail-brand">{{ p.brand | titlecase }}</p>
+            <div class="rating">
+              @for (star of getStars(p.rating); track $index) {
+                <span class="star" [class.filled]="star">★</span>
+              }
+              <span class="rating-value">{{ p.rating | number:'1.1-1' }}</span>
+            </div>
+            <p class="detail-description">{{ p.description }}</p>
+            <div class="price-block">
+              @if (p.price.discountPercentage > 0) {
+                <span class="old-price">{{ p.price.beforeDiscount | number:'1.0-0' }} {{ p.price.currency }}</span>
+                <span class="discount-badge">-{{ p.price.discountPercentage }}%</span>
+              }
+              <span class="current-price">{{ p.price.current | number:'1.0-0' }} {{ p.price.currency }}</span>
+            </div>
+            <p class="warranty">🛡️ {{ p.warranty }} {{ translation.t('year warranty') }}</p>
+            <p class="stock-status" [class.in]="p.stock > 0" [class.out]="p.stock <= 0">
+              {{ p.stock > 0 ? translation.t('In Stock') + ' (' + p.stock + ' ' + translation.t('left') + ')' : translation.t('Out of Stock') }}
+            </p>
+            <button class="add-btn"
+              [class.in-stock]="p.stock > 0 && !addedToCart() && auth.isLoggedIn"
+              [class.no-stock]="p.stock <= 0 || !auth.isLoggedIn"
+              [class.added]="addedToCart()"
+              [disabled]="p.stock <= 0 || cartLoading() || !auth.isLoggedIn"
+              (click)="addToCart(p._id)">
+              @if (cartLoading()) {
+                {{ translation.t('Adding...') }}
+              } @else if (addedToCart()) {
+                ✓ {{ translation.t('Added to Cart!') }}
+              } @else if (!auth.isLoggedIn) {
+                🔒 {{ translation.t('Please register') }}
+              } @else if (p.stock > 0) {
+                {{ translation.t('Add to Cart') }}
+              } @else {
+                {{ translation.t('Out of Stock') }}
+              }
+            </button>
+            <button class="compare-btn" [class.active]="compareService.has(p._id)" (click)="toggleCompare(p)">
+              {{ compareService.has(p._id) ? '✓ ' + translation.t('In Compare') : '⚖ ' + translation.t('Compare') }}
+            </button>
           </div>
-          <p class="detail-description">{{ p.description }}</p>
-          <div class="price-block">
-            @if (p.price.discountPercentage > 0) {
-            <span class="old-price">{{ p.price.beforeDiscount | number:'1.0-0' }} {{ p.price.currency }}</span>
-            <span class="discount-badge">-{{ p.price.discountPercentage }}%</span>
-            }
-            <span class="current-price">{{ p.price.current | number:'1.0-0' }} {{ p.price.currency }}</span>
-          </div>
-          <p class="warranty">🛡️ {{ p.warranty }} year warranty</p>
-          <p class="stock-status" [class.in]="p.stock > 0" [class.out]="p.stock <= 0">
-            {{ p.stock > 0 ? 'In Stock (' + p.stock + ' left)' : 'Out of Stock' }}
-          </p>
-          <button class="add-btn" [class.in-stock]="p.stock > 0 && !addedToCart() && auth.isLoggedIn"
-            [class.no-stock]="p.stock <= 0 || !auth.isLoggedIn" [class.added]="addedToCart()"
-            [disabled]="p.stock <= 0 || cartLoading() || !auth.isLoggedIn" (click)="addToCart(p._id)">
-            @if (cartLoading()) {
-            Adding...
-            } @else if (addedToCart()) {
-            ✓ Added to Cart!
-            } @else if (!auth.isLoggedIn) {
-            🔒 გაიარე რეგისტრაცია
-            } @else if (p.stock > 0) {
-            Add to Cart
-            } @else {
-            Out of Stock
-            }
-          </button>
-          <button class="compare-btn" [class.active]="compareService.has(p._id)" (click)="toggleCompare(p)">
-            {{ compareService.has(p._id) ? '✓ შედარებაში' : '⚖ შედარება' }}
-          </button>
         </div>
       </div>
     </div>
-  </div>
   }
 </div>

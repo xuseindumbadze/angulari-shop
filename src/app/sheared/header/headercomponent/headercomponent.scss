@@ -375,3 +375,114 @@
   .btn-signup, .btn-signin, .btn-signout, .user-info, .btn-cart, .btn-compare { display: none; }
   .search-wrapper { max-width: 100%; }
 }
+.lang-switcher {
+  position: relative;
+
+  &.translating .btn-lang {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+}
+
+.btn-lang {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: transparent;
+  color: inherit;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover { background: rgba(255,255,255,0.1); }
+
+  svg {
+    transition: transform 0.2s;
+    opacity: 0.7;
+    &.rotated { transform: rotate(180deg); }
+  }
+}
+
+.lang-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.lang-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  overflow: hidden;
+  z-index: 1000;
+  min-width: 150px;
+  animation: fadeDown 0.15s ease;
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 14px;
+  border: none;
+  background: none;
+  color: #111;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+
+  &:hover { background: #f5f5f5; }
+  &.active { background: #f0f0ff; color: #6c63ff; font-weight: 600; }
+}
+
+.drawer-section-label {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 0;
+  display: block;
+}
+
+.drawer-lang-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 4px 0 8px;
+}
+
+.drawer-lang-btn {
+  padding: 8px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+
+  &:hover { background: #f5f5f5; }
+  &.active { background: #f0f0ff; border-color: #6c63ff; color: #6c63ff; font-weight: 600; }
+}

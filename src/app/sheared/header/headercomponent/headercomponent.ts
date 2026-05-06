@@ -9,6 +9,7 @@ import { Product } from '../../../models/product.modals';
 import { SigninModalsComponent } from '../../modals/signin-modals/signin-modals';
 import { SignupModalsComponent } from '../../modals/signup-modals/signup-modals';
 import { CompareService } from '../../../core/services/compire';
+import { TranslationService, LANGUAGES, SupportedLang } from '../../../core/services/translation.service';
 
 @Component({
   selector: 'app-headercomponent',
@@ -21,10 +22,12 @@ export class Headercomponent implements OnInit {
   searchService = inject(SearchService);
   router = inject(Router);
   elRef = inject(ElementRef);
-
-
-
   compareService = inject(CompareService);
+  translationService = inject(TranslationService);
+
+  languages = LANGUAGES;
+  showLangMenu = signal(false);
+
   searchQuery = '';
   searchResults = signal<Product[]>([]);
   showResults = signal(false);
@@ -68,6 +71,19 @@ export class Headercomponent implements OnInit {
     this.clearSearch();
   }
 
+  selectLang(code: SupportedLang) {
+    this.translationService.setLanguage(code);
+    this.showLangMenu.set(false);
+  }
+
+  toggleLangMenu() {
+    this.showLangMenu.update(v => !v);
+  }
+
+  currentLangLabel() {
+    return this.languages.find(l => l.code === this.translationService.currentLang())?.label || '🌐';
+  }
+
   goToProfile() { this.router.navigate(['/profile']); }
   goToCart() { this.router.navigate(['/cart']); }
   signOut() { this.auth.signOut().subscribe(); }
@@ -97,6 +113,7 @@ export class Headercomponent implements OnInit {
     if (this.elRef && !this.elRef.nativeElement.contains(target)) {
       this.showResults.set(false);
       this.menuOpen.set(false);
+      this.showLangMenu.set(false);
     }
   }
 }
