@@ -41,7 +41,6 @@
         <button [class.active]="activeTab() === 'info'"     (click)="setTab('info')">👤 ინფო</button>
         <button [class.active]="activeTab() === 'edit'"     (click)="setTab('edit')">✏️ რედაქტირება</button>
         <button [class.active]="activeTab() === 'password'" (click)="setTab('password')">🔒 პაროლი</button>
-        <button [class.active]="activeTab() === 'token'"    (click)="setTab('token')">🔑 ტოკენი</button>
         <button [class.active]="activeTab() === 'danger'"   (click)="setTab('danger')" class="danger-tab">⚠️ წაშლა</button>
       </nav>
 
@@ -163,45 +162,7 @@
         </div>
       }
 
-      <!-- TAB: TOKEN -->
-      @if (activeTab() === 'token') {
-        <div class="token-section">
-          <p class="section-desc">აქ შეგიძლია ნახო, განაახლო ან ხელით მიუთითო access token.</p>
-
-          <div class="token-box-wrap">
-            <label class="token-label">მიმდინარე ტოკენი</label>
-            <div class="token-box">
-              <code class="token-text">
-                {{ showToken() ? currentToken : (currentToken ? '••••••••••••••••••••••••' : 'ტოკენი არ არის') }}
-              </code>
-              <div class="token-actions">
-                <button class="icon-btn" (click)="showToken.update(v => !v)" [title]="showToken() ? 'დამალვა' : 'ჩვენება'">
-                  {{ showToken() ? '🙈' : '👁' }}
-                </button>
-                <button class="icon-btn" (click)="copyToken()" title="კოპირება">📋</button>
-              </div>
-            </div>
-          </div>
-
-          <button class="refresh-btn" (click)="refreshToken()">🔄 ტოკენის განახლება (Refresh)</button>
-
-          <div class="divider"><span>ან შეიყვანე ტოკენი ხელით</span></div>
-
-          <div class="field full">
-            <label>ტოკენი</label>
-            <input
-              type="text"
-              [(ngModel)]="manualToken"
-              name="manualToken"
-              placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-            />
-          </div>
-          <button class="save-btn" (click)="applyManualToken()" [disabled]="!manualToken.trim()">
-            ✅ ტოკენის გამოყენება
-          </button>
-        </div>
-      }
-
+     
       <!-- TAB: DANGER -->
       @if (activeTab() === 'danger') {
         <div class="danger-section">

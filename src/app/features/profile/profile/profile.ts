@@ -142,41 +142,7 @@ export class Profile implements OnInit {
 
   // ─── Token ────────────────────────────────────────────────────────────────
 
-  get currentToken(): string {
-    return this.auth.token ?? '';
-  }
-
-  copyToken() {
-    navigator.clipboard.writeText(this.currentToken).then(() => {
-      this.showSuccess('ტოკენი კოპირებულია!');
-    });
-  }
-
-  applyManualToken() {
-    if (!this.manualToken.trim()) {
-      this.showError('ტოკენი ცარიელია.');
-      return;
-    }
-    this.auth.setTokenManually(this.manualToken.trim());
-    this.auth.getMe().subscribe({
-      next: (user) => {
-        if (user) {
-          this.showSuccess('ტოკენი გამოყენებულია, პროფილი განახლდა!');
-          this.manualToken = '';
-        } else {
-          this.showError('ტოკენი არასწორია ან ვადაგასულია.');
-        }
-      },
-      error: () => this.showError('ტოკენი არასწორია ან ვადაგასულია.'),
-    });
-  }
-
-  refreshToken() {
-    this.auth.refreshToken().subscribe({
-      next: () => this.showSuccess('ტოკენი განახლდა!'),
-      error: () => this.showError('ტოკენის განახლება ვერ მოხერხდა.'),
-    });
-  }
+  
 
   // ─── Delete ───────────────────────────────────────────────────────────────
 
