@@ -22,6 +22,7 @@ export class Products implements OnInit, OnDestroy {
 
   compareService = inject(CompareService);
   auth = inject(AuthService);
+
   allProducts = signal<Product[]>([]);
   categories = signal<Category[]>([]);
   brands = signal<string[]>([]);
@@ -29,6 +30,18 @@ export class Products implements OnInit, OnDestroy {
   addingToCart = signal<string | null>(null);
   addedToCart = signal<string | null>(null);
 
+  // 🔥 PAGINATION დამატებული
+  pageIndex = signal(1);
+  pageSize = signal(6);
+  total = signal(0);
+
+  totalPages = computed(() => Math.ceil(this.total() / this.pageSize()));
+
+  pages = computed(() =>
+    Array.from({ length: this.totalPages() }, (_, i) => i + 1)
+  );
+
+  // შენი filters 그대로
   selectedCategory = signal<string | null>(null);
   selectedBrand = signal<string | null>(null);
   selectedRating = signal<number | null>(null);
@@ -43,29 +56,34 @@ export class Products implements OnInit, OnDestroy {
   tempPriceMin = 0;
   tempPriceMax = 8000;
 
+  // ❗ არ შევეხეთ — ისევ მუშაობს
   products = computed(() => {
     let list = this.allProducts();
     const cat = this.selectedCategory();
     if (cat) list = list.filter(p => p.category.id === cat);
+
     const brand = this.selectedBrand();
     if (brand) list = list.filter(p => p.brand.toLowerCase() === brand.toLowerCase());
+
     const rating = this.selectedRating();
     if (rating !== null) list = list.filter(p => p.rating >= rating);
+
     const min = this.priceMin();
     const max = this.priceMax();
     list = list.filter(p => p.price.current >= min && p.price.current <= max);
+
     return list;
   });
 
   ngOnInit() {
+    this.loadProducts(); // ✅ pagination load
+
     forkJoin({
-      products: this.svc.productsAll(),
       categories: this.svc.getCategories(),
       brands: this.svc.getBrands(),
     }).pipe(
       takeUntil(this.destroyed$),
-      tap(({ products, categories, brands }) => {
-        this.allProducts.set(products.products);
+      tap(({ categories, brands }) => {
         this.categories.set(categories);
         this.brands.set(brands);
       }),
@@ -76,14 +94,46 @@ export class Products implements OnInit, OnDestroy {
     ).subscribe();
   }
 
+  // ✅ ახალი
+  loadProducts() {
+    this.svc.productsAll(this.pageIndex(), this.pageSize())
+      .pipe(
+        takeUntil(this.destroyed$),
+        tap(res => {
+          this.allProducts.set(res.products);
+          this.total.set(res.total);
+        }),
+        catchError(() => {
+          this.hasError.set(true);
+          return of(null);
+        })
+      )
+      .subscribe();
+  }
+
+  // ✅ ახალი
+  changePage(page: number) {
+    this.pageIndex.set(page);
+    this.loadProducts();
+  }
+
+  // ✅ ახალი
+  changePageSize(size: number) {
+    this.pageSize.set(+size);
+    this.pageIndex.set(1);
+    this.loadProducts();
+  }
+
   ngOnDestroy() {
     this.destroyed$.next();
     this.destroyed$.complete();
   }
 
+  // 👇 შენი ძველი კოდი untouched
   addToCart(event: Event, productId: string) {
     event.stopPropagation();
     if (!this.auth.isLoggedIn) return;
+
     this.addingToCart.set(productId);
 
     const cart = this.cartService.cart();

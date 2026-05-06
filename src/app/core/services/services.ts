@@ -15,17 +15,16 @@ export class Services {
 
   products = this._products.asReadonly();
 
-  productsAll(): Observable<ProductsResponse> {
-    if (!this._products$) {
-      this._products$ = this.http.get<ProductsResponse>(`${this.BASE}/all?page_size=38`).pipe(
-        tap(res => {
-          this._products.set(res.products);
-          this._productsLoaded = true;
-        }),
-        shareReplay(1)
-      );
-    }
-    return this._products$;
+  productsAll(pageIndex: number = 1, pageSize: number = 38): Observable<ProductsResponse> {
+    return this.http.get<ProductsResponse>(
+      `${this.BASE}/all?page_index=${pageIndex}&page_size=${pageSize}`
+    ).pipe(
+      tap(res => {
+        this._products.set(res.products);
+        this._productsLoaded = true;
+      }),
+      shareReplay(1)
+    );
   }
 
   getCategories() {
