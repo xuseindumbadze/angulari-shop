@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Product, ProductsResponse, Category } from '../../models/product.modals';
 import { HttpClient } from '@angular/common/http';
-import { tap, shareReplay } from 'rxjs/operators';
+import { tap, shareReplay, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -16,14 +16,23 @@ export class Services {
   products = this._products.asReadonly();
 
   productsAll(pageIndex: number = 1, pageSize: number = 38): Observable<ProductsResponse> {
-    return this.http.get<ProductsResponse>(
-      `${this.BASE}/all?page_index=${pageIndex}&page_size=${pageSize}`
-    ).pipe(
-      tap(res => {
-        this._products.set(res.products);
-        this._productsLoaded = true;
-      }),
-      shareReplay(1)
+    if (!this._products$) {
+      this._products$ = this.http.get<ProductsResponse>(
+        `${this.BASE}/all?page_index=${pageIndex}&page_size=${pageSize}`
+      ).pipe(
+        tap(res => {
+          this._products.set(res.products);
+          this._productsLoaded = true;
+        }),
+        shareReplay(1)
+      );
+    }
+    return this._products$;
+  }
+
+  getProductById(id: string): Observable<Product | null> {
+    return this.productsAll().pipe(
+      map(res => res.products.find(p => p._id === id) ?? null)
     );
   }
 

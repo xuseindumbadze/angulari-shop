@@ -12,7 +12,6 @@
   align-items: flex-start;
 }
 
-// ── SIDEBAR ──────────────────────────────────────────
 .sidebar {
   width: 260px;
   flex-shrink: 0;
@@ -66,7 +65,6 @@
   gap: 6px;
 }
 
-// category chips
 .filter-chip {
   display: flex;
   align-items: center;
@@ -89,13 +87,11 @@
     width: 18px;
     height: 18px;
     object-fit: contain;
-    filter: invert(0);
   }
 
   &.active .chip-icon { filter: brightness(0) invert(1); }
 }
 
-// radio rows (brand, rating)
 .radio-row {
   display: flex;
   align-items: center;
@@ -135,7 +131,6 @@
   color: #888;
 }
 
-// price
 .price-body { gap: 10px; }
 
 .price-inputs {
@@ -203,7 +198,6 @@
   &:hover { color: #6c63ff; }
 }
 
-// ── GRID ─────────────────────────────────────────────
 .products-grid {
   display: flex;
   flex-wrap: wrap;
@@ -230,7 +224,6 @@
 }
 
 .no-results {
-  grid-column: 1 / -1;
   text-align: center;
   padding: 60px;
   font-size: 16px;
@@ -238,7 +231,6 @@
 }
 
 .loading {
-  grid-column: 1 / -1;
   text-align: center;
   padding: 80px 0;
 
@@ -260,14 +252,12 @@
 }
 
 .error-state {
-  grid-column: 1 / -1;
   text-align: center;
   padding: 80px 0;
   color: #e53935;
   font-size: 18px;
 }
 
-// დანარჩენი card სტილები იგივე რჩება (product-card, card-image და ა.შ.)
 .product-card {
   background: #fff;
   border-radius: 16px;
@@ -405,6 +395,7 @@
     cursor: default;
   }
 }
+
 .compare-btn {
   width: 100%;
   padding: 10px;
@@ -430,10 +421,6 @@
   }
 }
 
-@media (max-width: 768px) {
-  .products-layout { flex-direction: column; }
-  .sidebar { width: 100%; position: static; }
-}
 .pagination {
   margin-top: 40px;
   padding: 20px 24px;
@@ -548,6 +535,11 @@
     color: #fff;
     border-color: #1a1a1a;
   }
+}
+
+@media (max-width: 768px) {
+  .products-layout { flex-direction: column; }
+  .sidebar { width: 100%; position: static; }
 }
 
 @media (max-width: 640px) {

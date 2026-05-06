@@ -34,19 +34,16 @@ export class ProductDetailPage implements OnInit {
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.svc.productsAll().pipe(
+      this.svc.getProductById(id).pipe(
         catchError(() => { this.hasError.set(true); return of(null); })
-      ).subscribe(res => {
-        if (res) {
-          const found = res.products.find(p => p._id === id);
-          if (found) {
-            this.product.set(found);
-            const allImages = [found.thumbnail, ...found.images];
-            this.selectedImage.set(found.thumbnail);
-            found.images = allImages;
-          } else {
-            this.hasError.set(true);
-          }
+      ).subscribe(product => {
+        if (product) {
+          const allImages = [product.thumbnail, ...product.images];
+          product.images = allImages;
+          this.product.set(product);
+          this.selectedImage.set(product.thumbnail);
+        } else {
+          this.hasError.set(true);
         }
       });
     }
