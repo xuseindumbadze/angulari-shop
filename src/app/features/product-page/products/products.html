@@ -14,9 +14,7 @@
         @if (categoryOpen()) {
         <div class="accordion-body">
           @for (cat of categories(); track cat.id) {
-          <button class="filter-chip"
-            [class.active]="selectedCategory() === cat.id"
-            (click)="selectCategory(cat.id)">
+          <button class="filter-chip" [class.active]="selectedCategory() === cat.id" (click)="selectCategory(cat.id)">
             <img [src]="cat.image" [alt]="cat.name" class="chip-icon" />
             {{ cat.name }}
           </button>
@@ -122,14 +120,10 @@
         }
 
         @for (product of products(); track product._id) {
-        <div class="product-card"
-          [class.out-of-stock]="product.stock <= 0"
-          [routerLink]="['/product', product._id]">
+        <div class="product-card" [class.out-of-stock]="product.stock <= 0" [routerLink]="['/product', product._id]">
 
           <div class="card-image-wrapper">
-            <img class="card-image"
-              [src]="product.thumbnail"
-              [attr.alt]="product.title" />
+            <img class="card-image" [src]="product.thumbnail" [attr.alt]="product.title" />
 
             @if (product.price.discountPercentage > 0) {
             <span class="discount-badge">
@@ -137,9 +131,8 @@
             </span>
             }
 
-            @if (product.stock <= 0) {
-            <span class="oos-ribbon">Out of Stock</span>
-            }
+            @if (product.stock <= 0) { <span class="oos-ribbon">Out of Stock</span>
+              }
           </div>
 
           <div class="card-body">
@@ -172,14 +165,12 @@
 
             <p class="warranty">🛡️ {{ product.warranty }} year warranty</p>
 
-            <button class="stock-btn"
-              (click)="addToCart($event, product._id)">
+            <button class="stock-btn" (click)="addToCart($event, product._id)">
               Add to Cart
             </button>
 
-            <button class="compare-btn"
-              (click)="toggleCompare($event, product)">
-              Compare
+            <button class="compare-btn" (click)="toggleCompare($event, product)">
+              ⚖ შედარება
             </button>
           </div>
 
@@ -193,9 +184,7 @@
 
         <div class="pages">
           @for (p of pages(); track p) {
-          <button class="page-btn"
-            [class.active]="p === pageIndex()"
-            (click)="changePage(p)">
+          <button class="page-btn" [class.active]="p === pageIndex()" (click)="changePage(p)">
             {{ p }}
           </button>
           }
