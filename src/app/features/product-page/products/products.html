@@ -89,7 +89,7 @@
 
     <div class="products-content">
 
-      @if (!allProducts().length && !hasError()) {
+      @if (loading()) {
       <div class="loading">
         <div class="spinner"></div>
         <p>{{ translation.t('Loading products...') }}</p>
@@ -102,7 +102,7 @@
       </div>
       }
 
-      @if (allProducts().length && !products().length) {
+      @if (!loading() && !hasError() && !products().length) {
       <div class="no-results">
         {{ translation.t('No products match your filters.') }}
       </div>
@@ -163,10 +163,11 @@
         }
       </div>
 
+      @if (!loading() && total() > 0) {
       <div class="pagination">
         <div class="pagination-info">
           {{ translation.t('Showing') }}
-          <strong>{{ (pageIndex() - 1) * pageSize() + 1 }}–{{ pageIndex() * pageSize() > total() ? total() : pageIndex() * pageSize() }}</strong>
+          <strong>{{ displayStart() }}–{{ displayEnd() }}</strong>
           {{ translation.t('of') }} <strong>{{ total() }}</strong> {{ translation.t('results') }}
         </div>
 
@@ -193,6 +194,7 @@
           </div>
         </div>
       </div>
+      }
 
     </div>
   </div>

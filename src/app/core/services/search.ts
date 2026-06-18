@@ -11,8 +11,9 @@ export class SearchService {
   searchResults = signal<Product[]>([]);
 
   search(keywords: string) {
+    // page_size ზღუდავს header-ის dropdown-ის შედეგებს (UX).
     return this.http.get<ProductsResponse>(this.BASE, {
-      params: { keywords }
+      params: { keywords, page_size: '8' },
     });
   }
 
