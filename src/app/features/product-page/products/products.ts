@@ -69,7 +69,7 @@ export class Products implements OnInit, OnDestroy {
   selectedCategory = signal<string | null>(null);
   selectedBrand = signal<string | null>(null);
   selectedRating = signal<number | null>(null);
-  // null = ფასის ფილტრი არ არის გააქტიურებული (სერვერს არ ეგზავნება)
+
   priceMin = signal<number | null>(null);
   priceMax = signal<number | null>(null);
 
@@ -78,7 +78,7 @@ export class Products implements OnInit, OnDestroy {
   ratingOpen = signal(false);
   priceOpen = signal(false);
 
-  // input-ების დროებითი მნიშვნელობები (Apply-მდე არ მოქმედებს)
+
   tempPriceMin: number | null = null;
   tempPriceMax: number | null = null;
 
@@ -100,7 +100,7 @@ export class Products implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  /** ერთადერთი წყარო — ყველა ფილტრი + პაგინაცია სერვერზე იგზავნება ერთად. */
+
   load() {
     this.loading.set(true);
     this.hasError.set(false);
@@ -143,7 +143,7 @@ export class Products implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  /** ფილტრის ნებისმიერი ცვლილება ბრუნდება 1-ელ გვერდზე და თავიდან იტვირთება. */
+
   private applyFilters() {
     this.pageIndex.set(1);
     this.load();
@@ -168,7 +168,6 @@ export class Products implements OnInit, OnDestroy {
   applyPrice() {
     let min = this.tempPriceMin;
     let max = this.tempPriceMax;
-    // თუ min > max — შევცვალოთ ადგილები
     if (min !== null && max !== null && min > max) {
       [min, max] = [max, min];
       this.tempPriceMin = min;
@@ -179,7 +178,6 @@ export class Products implements OnInit, OnDestroy {
     this.applyFilters();
   }
 
-  /** „GET ALL“ — ასუფთავებს ყველა ფილტრს, ბრუნდება 1-ელ გვერდზე და თავიდან იტვირთება. */
   resetAll() {
     this.selectedCategory.set(null);
     this.selectedBrand.set(null);

@@ -13,11 +13,7 @@ export class Services {
   private _products = signal<Product[]>([]);
   products = this._products.asReadonly();
 
-  /**
-   * სერვერის მხარეს ფილტრაცია + დახარისხება + პაგინაცია ერთ მოთხოვნაში.
-   * total ბრუნდება *გაფილტრული* შედეგისთვის — ამიტომ პაგინაცია ყოველთვის ემთხვევა
-   * ნაჩვენებ პროდუქტებს (ეს ასწორებს price ფილტრის არევას პაგინაციისას).
-   */
+
   searchProducts(query: ProductSearchParams): Observable<ProductsResponse> {
     let params = new HttpParams()
       .set('page_index', query.page_index)
@@ -35,7 +31,7 @@ export class Services {
     if (query.price_max !== undefined && query.price_max !== null) {
       params = params.set('price_max', query.price_max);
     }
-    // sort_by და sort_direction იგზავნება მხოლოდ ერთად (API-ის მოთხოვნა).
+
     if (query.sort_by && query.sort_direction) {
       params = params
         .set('sort_by', query.sort_by)
@@ -47,17 +43,13 @@ export class Services {
       .pipe(tap((res) => this._products.set(res.products)));
   }
 
-  /** /all — პაგინაცია ფილტრის გარეშე (იყენებს cart-page სრული კატალოგის ასაშენებლად). */
   productsAll(pageIndex: number = 1, pageSize: number = 38): Observable<ProductsResponse> {
     return this.http
       .get<ProductsResponse>(`${this.BASE}/all?page_index=${pageIndex}&page_size=${pageSize}`)
       .pipe(tap((res) => this._products.set(res.products)));
   }
 
-  /**
-   * ცალკეული პროდუქტი Swagger-ის სწორი endpoint-ით (/id/{id}).
-   * ძველი ვერსია მხოლოდ პირველ 38 პროდუქტში ეძებდა → ვერ პოულობდა დანარჩენებს.
-   */
+  
   getProductById(id: string): Observable<Product> {
     return this.http.get<Product>(`${this.BASE}/id/${id}`);
   }
